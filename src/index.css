@@ -1,0 +1,162 @@
+/* Design tokens — SPEC §11. Nothing outside this set is used in components. */
+:root {
+  /* §11.1 colour */
+  --bg-page: #f7f6fa;
+  --bg-primary: #ffffff;
+  --bg-input: #e0e0ec;
+  --border-primary: #cccade;
+  --border-subtle: #0f143733;
+  --text-primary: #181818;
+  --text-secondary: #6b688c;
+  --text-inverted: #ffffff;
+  --text-disabled: #98a2b3;
+  --text-placeholder: #b8b6d2;
+  --accent: #2b7bea;
+  --accent-hover: #276fd3;
+  --accent-pressed: #215eb3;
+  --border-focus: #2b7bea;
+  --disabled-bg: #e4e7ec;
+
+  /* secondary button pressed/hover states — §11.8 */
+  --secondary-hover-border: #b8b6d2;
+  --secondary-pressed-border: #9996be;
+  --secondary-pressed-text: #565475;
+
+  /* §11.2 status */
+  --error-border: #ff4d4d;
+  --error-bg: #fff0f0;
+  --error-text: #d32f2f;
+  --success: #12b76a;
+  /* [FALLBACK] modal backdrop and page blobs — not defined in Figma or the BRIEF */
+  --backdrop: #18181866;
+  --blob-accent: #2b7bea1f;
+  --blob-accent-fade: #2b7bea00;
+  --blob-violet: #9945ff1a;
+  --blob-violet-fade: #9945ff00;
+
+  /* §11.4 spacing */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+
+  /* §11.5 radius */
+  --radius-s: 8px;
+  --radius-m: 12px;
+  --radius-l: 16px;
+  --radius-xl: 24px;
+  --radius-full: 999px;
+
+  /* §11.3 typography */
+  --font-family: 'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-body-lg: 600 20px / 30px var(--font-family);
+  /* amount input steps — §13 breakpoints and E8 overflow steps */
+  --font-amount-18: 600 18px / 26px var(--font-family);
+  --font-amount-16: 600 16px / 24px var(--font-family);
+  --font-amount-14: 600 14px / 20px var(--font-family);
+  --font-body-md: 600 15px / 22px var(--font-family);
+  --font-body-sm: 400 14px / 20px var(--font-family);
+  --font-body-sm-medium: 500 14px / 20px var(--font-family);
+  --font-body-2sm: 400 12px / 16px var(--font-family);
+  --font-body-2sm-strong: 600 12px / 16px var(--font-family);
+  --font-caption-sm: 400 12px / 16px var(--font-family);
+  --font-button-lg: 500 16px / 24px var(--font-family);
+  --font-h1: 600 28px / 36px var(--font-family);
+  --font-h2: 600 20px / 30px var(--font-family);
+
+  /* §11.6 focus ring */
+  --focus-ring: 0 0 0 2px #ffffff, 0 0 0 6px #2b7bea;
+
+  /* §11.8 / §13 sizes */
+  --control-height: 48px;
+  --tap-size: 40px;
+  --shadow-dropdown: 0 6px 8px #21201f0a;
+
+  /* §12 motion */
+  --duration-fast: 120ms;
+  --duration-base: 150ms;
+  --duration-slow: 200ms;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+}
+
+body {
+  background: var(--bg-page);
+  color: var(--text-primary);
+  font: var(--font-body-sm);
+  letter-spacing: 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+p {
+  margin: 0;
+}
+
+button {
+  font-family: inherit;
+  letter-spacing: 0;
+}
+
+input {
+  font-family: inherit;
+  letter-spacing: 0;
+}
+
+:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* §12 / E19 — every listed transition and animation is disabled. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

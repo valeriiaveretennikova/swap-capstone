@@ -1,0 +1,63 @@
+.page {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  min-height: 100vh;
+  padding: var(--space-4);
+  overflow: hidden;
+}
+
+/* §11.9 — flat page colour plus two soft radial blobs, decorative only. */
+.page::before,
+.page::after {
+  content: '';
+  position: absolute;
+  z-index: 0;
+  width: 640px;
+  height: 640px;
+  border-radius: var(--radius-full);
+  pointer-events: none;
+}
+
+.page::before {
+  top: -220px;
+  left: -180px;
+  background: radial-gradient(circle, var(--blob-accent) 0%, var(--blob-accent-fade) 70%);
+}
+
+.page::after {
+  right: -200px;
+  bottom: -240px;
+  background: radial-gradient(circle, var(--blob-violet) 0%, var(--blob-violet-fade) 70%);
+}
+
+.content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+@media (max-width: 767px) {
+  .page {
+    align-items: flex-start;
+    padding: var(--space-6) var(--space-4) var(--space-4);
+  }
+
+  .page::before,
+  .page::after {
+    display: none;
+  }
+
+  .content {
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 359px) {
+  .page {
+    padding: var(--space-6) var(--space-3) var(--space-3);
+  }
+}

@@ -1,0 +1,10 @@
+.spinner {
+  flex: none;
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--border-primary);
+  border-top-color: var(--accent);
+  border-radius: var(--radius-full);
+  animation: spin 800ms linear infinite;
+}

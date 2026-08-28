@@ -1,0 +1,131 @@
+.wrapper {
+  position: relative;
+  flex: none;
+}
+
+.trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--tap-size);
+  padding: var(--space-2);
+  background: var(--bg-page);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-s);
+  cursor: pointer;
+  transition: background-color var(--duration-base) ease, border-color var(--duration-base) ease;
+}
+
+.trigger:hover {
+  background: var(--bg-page);
+  border-color: var(--secondary-hover-border);
+}
+
+.ticker {
+  font: var(--font-body-md);
+  color: var(--text-primary);
+}
+
+.chevron {
+  flex: none;
+  color: var(--text-primary);
+}
+
+.list {
+  position: absolute;
+  top: calc(100% + var(--space-1));
+  left: 0;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 240px;
+  padding: var(--space-3);
+  background: var(--bg-primary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-m);
+  box-shadow: var(--shadow-dropdown);
+  animation: dropdown-in var(--duration-fast) ease;
+}
+
+.dropUp {
+  top: auto;
+  bottom: calc(100% + var(--space-1));
+}
+
+@keyframes dropdown-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--tap-size);
+  padding: var(--space-2);
+  border-radius: var(--radius-s);
+  cursor: pointer;
+}
+
+.option:hover,
+.option:focus {
+  background: var(--bg-page);
+}
+
+.optionTicker {
+  font: var(--font-body-sm-medium);
+  color: var(--text-primary);
+}
+
+.optionName {
+  font: var(--font-body-sm);
+  color: var(--text-secondary);
+}
+
+.check {
+  flex: none;
+  margin-left: auto;
+  color: var(--accent);
+}
+
+.optionLocked {
+  cursor: not-allowed;
+}
+
+.optionLocked .optionTicker,
+.optionLocked .optionName {
+  color: var(--text-disabled);
+}
+
+.lockedIcon {
+  opacity: 0.4;
+}
+
+.optionLocked:hover {
+  background: transparent;
+}
+
+/* §13 — below 768px the list is width-matched to the amount card, which is the
+   nearest positioned ancestor once the wrapper stops being one. */
+@media (max-width: 767px) {
+  .wrapper {
+    position: static;
+  }
+
+  .list {
+    left: 0;
+    right: 0;
+    min-width: 0;
+  }
+
+  .dropUp {
+    top: auto;
+  }
+}

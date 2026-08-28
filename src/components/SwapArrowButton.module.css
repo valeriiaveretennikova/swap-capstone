@@ -1,0 +1,53 @@
+.row {
+  display: flex;
+  justify-content: center;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--tap-size);
+  height: var(--tap-size);
+  padding: 0;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: background-color var(--duration-base) ease, color var(--duration-base) ease;
+}
+
+.button:hover:not(:disabled) {
+  background: var(--bg-page);
+  color: var(--accent-hover);
+}
+
+.button:active:not(:disabled) {
+  background: var(--disabled-bg);
+  color: var(--accent-pressed);
+}
+
+.button:disabled {
+  color: var(--text-disabled);
+  cursor: not-allowed;
+}
+
+.icon {
+  color: inherit;
+  transition: transform var(--duration-slow) ease;
+}
+
+.button:not(:hover):not(:active) .icon {
+  color: var(--text-primary);
+}
+
+.iconFlipped {
+  transform: rotate(180deg);
+}
+
+/* E19 — no rotation at all under reduced motion. */
+@media (prefers-reduced-motion: reduce) {
+  .iconFlipped {
+    transform: none;
+  }
+}

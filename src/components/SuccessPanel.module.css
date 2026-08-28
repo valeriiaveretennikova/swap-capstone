@@ -1,0 +1,92 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  width: 100%;
+  max-width: 480px;
+  padding: var(--space-6);
+  background: var(--bg-primary);
+  border-radius: var(--radius-xl);
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  background: var(--success);
+  border-radius: var(--radius-full);
+}
+
+.badgeIcon {
+  color: var(--text-inverted);
+}
+
+.title {
+  font: var(--font-h2);
+  color: var(--text-primary);
+  text-align: center;
+}
+
+.title:focus-visible {
+  border-radius: var(--radius-s);
+}
+
+.summaryLine {
+  font: var(--font-body-md);
+  color: var(--text-primary);
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+.rows {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  width: 100%;
+}
+
+.orderId {
+  font: var(--font-body-md);
+  color: var(--text-primary);
+  letter-spacing: 0.04em;
+  user-select: all;
+}
+
+.copyButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--tap-size);
+  height: var(--tap-size);
+  margin-block: -8px;
+  padding: 0;
+  background: none;
+  border: none;
+  border-radius: var(--radius-s);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: color var(--duration-base) ease;
+}
+
+.copyButton:hover {
+  color: var(--accent-hover);
+}
+
+.copiedLabel {
+  font: var(--font-body-2sm-strong);
+  color: var(--success);
+}
+
+.failedLabel {
+  font: var(--font-body-2sm-strong);
+  color: var(--error-text);
+}
+
+@media (max-width: 767px) {
+  .card {
+    padding: var(--space-4);
+  }
+}

@@ -1,0 +1,128 @@
+import { ASSETS, MOCK_BALANCES } from '../constants';
+import { formatPlain, truncate } from './format';
+import {
+  isPositiveAmount,
+  normalizeOnBlur,
+  parseAmount,
+  sanitizeAmount,
+  stripGrouping,
+  truncateRaw,
+} from './sanitize';
+import type { ActiveSource, Asset, FormCore, Prices } from '../types';
+
+export function activeRawOf(core: FormCore): string {
+  return core.activeSource === 'send' ? core.sendRaw : core.receiveRaw;
+}
+
+/** SPEC §8.1 — cross rate through USD prices. */
+export function crossRate(prices: Prices, from: Asset, to: Asset): number {
+  return prices[from] / prices[to];
+}
+
+function directionOf(core: FormCore): { from: Asset; to: Asset } {
+  return core.activeSource === 'send'
+    ? { from: core.sendAsset, to: core.receiveAsset }
+    : { from: core.receiveAsset, to: core.sendAsset };
+}
+
+/** SPEC §8.2 — the passive amount, truncated to the target asset's decimals. */
+export function computePassive(core: FormCore, prices: Prices | null): string {
+  if (prices === null) return '';
+
+  const activeRaw = activeRawOf(core);
+  if (!isPositiveAmount(activeRaw)) return '';
+
+  const { from, to } = directionOf(core);
+  const converted = parseAmount(activeRaw) * crossRate(prices, from, to);
+  if (!Number.isFinite(converted)) return '';
+
+  const { decimals } = ASSETS[to];
+  return formatPlain(truncate(converted, decimals), decimals);
+}
+
+/**
+ * SPEC §8.2 loop guard — the single place where a calculated amount is written.
+ * It touches exactly the passive field; the active field is never rewritten.
+ */
+export function withPassive(core: FormCore, prices: Prices | null): FormCore {
+  const passive = computePassive(core, prices);
+
+  if (core.activeSource === 'send') {
+    return passive === core.receiveRaw ? core : { ...core, receiveRaw: passive };
+  }
+  return passive === core.sendRaw ? core : { ...core, sendRaw: passive };
+}
+
+function withActiveRaw(core: FormCore, field: ActiveSource, raw: string): FormCore {
+  return field === 'send'
+    ? { ...core, activeSource: 'send', sendRaw: raw }
+    : { ...core, activeSource: 'receive', receiveRaw: raw };
+}
+
+/** SPEC §9 — typing sets `activeSource` first, then recalculates. */
+export function applyTyping(
+  core: FormCore,
+  field: ActiveSource,
+  inputValue: string,
+  prices: Prices | null,
+): FormCore {
+  const asset = field === 'send' ? core.sendAsset : core.receiveAsset;
+  const previous = field === 'send' ? core.sendRaw : core.receiveRaw;
+  const wasPassive = core.activeSource !== field;
+  const incoming = wasPassive ? stripGrouping(inputValue) : inputValue;
+  const raw = sanitizeAmount(incoming, ASSETS[asset].decimals, previous);
+
+  return withPassive(withActiveRaw(core, field, raw), prices);
+}
+
+export function applyBlur(core: FormCore, field: ActiveSource): FormCore {
+  if (core.activeSource !== field) return core;
+  const raw = normalizeOnBlur(activeRawOf(core));
+  if (raw === activeRawOf(core)) return core;
+  return withActiveRaw(core, field, raw);
+}
+
+/** SPEC §8.3 — the four swap steps. */
+export function applySwap(core: FormCore, prices: Prices | null): FormCore {
+  const sendAsset = core.receiveAsset;
+  const receiveAsset = core.sendAsset;
+  const sendRaw = truncateRaw(stripGrouping(core.receiveRaw), ASSETS[sendAsset].decimals);
+
+  const swapped: FormCore = {
+    sendAsset,
+    receiveAsset,
+    sendRaw,
+    receiveRaw: core.sendRaw,
+    activeSource: 'send',
+  };
+
+  return withPassive(swapped, prices);
+}
+
+/** SPEC §8.4 — MAX fills the send field with the whole balance. */
+export function applyMax(core: FormCore, prices: Prices | null): FormCore {
+  const { decimals } = ASSETS[core.sendAsset];
+  const balance = MOCK_BALANCES[core.sendAsset];
+  const sendRaw = formatPlain(truncate(balance, decimals), decimals);
+
+  return withPassive(withActiveRaw(core, 'send', sendRaw), prices);
+}
+
+/** SPEC §8.5 — asset selection. */
+export function applyAssetChange(
+  core: FormCore,
+  field: ActiveSource,
+  asset: Asset,
+  prices: Prices | null,
+): FormCore {
+  const current = field === 'send' ? core.sendAsset : core.receiveAsset;
+  if (asset === current) return core;
+
+  const withAsset: FormCore =
+    field === 'send' ? { ...core, sendAsset: asset } : { ...core, receiveAsset: asset };
+
+  if (core.activeSource !== field) return withPassive(withAsset, prices);
+
+  const retruncated = truncateRaw(activeRawOf(withAsset), ASSETS[asset].decimals);
+  return withPassive(withActiveRaw(withAsset, field, retruncated), prices);
+}

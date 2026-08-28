@@ -1,0 +1,170 @@
+.field {
+  display: flex;
+  flex-direction: column;
+}
+
+/* §11.7 — the 1px/2px outline is an inset shadow so state changes cause no
+   layout shift; colours and widths are exactly those of the spec. */
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  min-height: 102px;
+  padding: var(--space-4);
+  background: var(--bg-page);
+  border-radius: var(--radius-m);
+  box-shadow: inset 0 0 0 1px var(--border-subtle);
+  transition: box-shadow var(--duration-base) ease;
+}
+
+.card:has(input:focus) {
+  box-shadow: inset 0 0 0 2px var(--border-focus);
+}
+
+.cardError,
+.cardError:has(input:focus) {
+  box-shadow: inset 0 0 0 2px var(--error-border);
+}
+
+.cardDisabled {
+  box-shadow: inset 0 0 0 1px var(--disabled-bg);
+}
+
+.topRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.label {
+  font: var(--font-caption-sm);
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.cardDisabled .label,
+.cardDisabled .balance {
+  color: var(--text-disabled);
+}
+
+.balanceRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.walletIcon {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  color: var(--text-secondary);
+}
+
+.balance {
+  overflow: hidden;
+  font: var(--font-body-2sm);
+  color: var(--text-secondary);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* §13 — the chip keeps a 40px hit area without stretching the row. */
+.maxChip {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap-size);
+  margin-block: -12px;
+  padding: 0 var(--space-2);
+  background: none;
+  border: none;
+  border-radius: var(--radius-full);
+  font: var(--font-body-2sm-strong);
+  color: var(--accent);
+  cursor: pointer;
+  transition: color var(--duration-base) ease;
+}
+
+.maxChip:hover:not(:disabled) {
+  color: var(--accent-hover);
+}
+
+.maxChip:active:not(:disabled) {
+  color: var(--accent-pressed);
+}
+
+.maxChip:disabled {
+  color: var(--text-disabled);
+  cursor: not-allowed;
+}
+
+.bottomRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.value {
+  flex: 1;
+  min-width: 0;
+  min-height: var(--tap-size);
+  padding: 0;
+  background: none;
+  border: none;
+  border-radius: var(--radius-s);
+  font: var(--font-body-lg);
+  color: var(--text-primary);
+  text-align: right;
+}
+
+.value::placeholder {
+  color: var(--text-placeholder);
+}
+
+.value:disabled {
+  color: var(--text-disabled);
+}
+
+.valueMd {
+  font: var(--font-amount-16);
+}
+
+.valueSm {
+  font: var(--font-amount-14);
+}
+
+.helper {
+  margin-top: var(--space-1);
+  padding-inline: var(--space-4);
+  font: var(--font-caption-sm);
+  color: var(--text-secondary);
+}
+
+@media (max-width: 767px) {
+  .value {
+    font: var(--font-amount-18);
+  }
+
+  .valueMd {
+    font: var(--font-amount-16);
+  }
+
+  .valueSm {
+    font: var(--font-amount-14);
+  }
+}
+
+@media (max-width: 359px) {
+  .value {
+    font: var(--font-amount-16);
+  }
+
+  .valueSm {
+    font: var(--font-amount-14);
+  }
+}

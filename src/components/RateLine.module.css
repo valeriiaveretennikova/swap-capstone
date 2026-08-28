@@ -1,0 +1,18 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.line {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font: var(--font-caption-sm);
+  color: var(--text-secondary);
+}
+
+.caption {
+  font: var(--font-caption-sm);
+  color: var(--text-secondary);
+}
