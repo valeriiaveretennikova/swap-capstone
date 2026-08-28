@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Команда агентів — Capstone</title>
+<style>
+  :root{
+    --bg:#f7f7f5; --panel:#fff; --ink:#1a1a18; --muted:#6b6b66;
+    --line:#e2e2dd; --accent:#c2410c; --accent-soft:#fff1e8;
+    --yes:#0f766e; --yes-soft:#e6f4f2; --no:#5b5bd6; --no-soft:#eeeeff;
+    --stop:#b91c1c; --stop-soft:#fdeceb;
+    --mono:ui-monospace,SFMono-Regular,Menlo,monospace;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --bg:#141413; --panel:#1c1c1a; --ink:#eeeeec; --muted:#9a9a93;
+      --line:#2e2e2b; --accent:#f0855c; --accent-soft:#2a1a13;
+      --yes:#5eead4; --yes-soft:#10231f; --no:#a5a5f5; --no-soft:#1a1a2e;
+      --stop:#f87171; --stop-soft:#2a1414;
+    }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:15px/1.6 ui-sans-serif,-apple-system,"Segoe UI",Roboto,sans-serif;}
+  .wrap{max-width:1080px;margin:0 auto;padding:48px 24px 80px}
+  header{border-bottom:1px solid var(--line);padding-bottom:24px;margin-bottom:40px}
+  h1{font-size:30px;margin:0 0 6px;letter-spacing:-.02em}
+  .sub{color:var(--muted);margin:0}
+  h2{font-size:13px;text-transform:uppercase;letter-spacing:.09em;
+     color:var(--muted);margin:48px 0 16px;font-weight:600}
+  h2:first-of-type{margin-top:0}
+
+  /* ---- flow ---- */
+  .flow{display:flex;align-items:stretch;flex-wrap:wrap;gap:10px}
+  .step{background:var(--panel);border:1px solid var(--line);border-radius:10px;
+        padding:12px 16px;min-width:130px;flex:1}
+  .step .n{font:600 11px var(--mono);color:var(--accent)}
+  .step .t{font-weight:600;font-family:var(--mono);font-size:14px;margin-top:2px}
+  .step .d{color:var(--muted);font-size:12.5px;margin-top:3px}
+  .arrow{align-self:center;color:var(--muted);font-size:18px}
+
+  /* ---- branch ---- */
+  .gate{background:var(--accent-soft);border:1px solid var(--accent);
+        border-radius:10px;padding:18px 20px;margin:12px 0}
+  .gate .q{font-weight:600;font-size:16px}
+  .gate .q small{display:block;font-weight:400;color:var(--muted);font-size:13px;margin-top:4px}
+  .branches{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+  .br{border-radius:10px;padding:14px 16px;border:1px solid}
+  .br.y{background:var(--yes-soft);border-color:var(--yes)}
+  .br.n{background:var(--no-soft);border-color:var(--no)}
+  .br .lbl{font-weight:700;font-size:13px;letter-spacing:.04em;text-transform:uppercase}
+  .br.y .lbl{color:var(--yes)} .br.n .lbl{color:var(--no)}
+  .br .chain{font-family:var(--mono);font-size:13px;margin-top:8px;line-height:1.9}
+  .br .why{color:var(--muted);font-size:12.5px;margin-top:8px}
+
+  /* ---- cards ---- */
+  .cards{display:grid;gap:14px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;
+        padding:20px 22px;display:grid;grid-template-columns:150px 1fr;gap:22px}
+  .card .id .nm{font-family:var(--mono);font-weight:700;font-size:16px;color:var(--accent)}
+  .card .id .role{color:var(--muted);font-size:12.5px;margin-top:2px}
+  .card .id .badge{display:inline-block;margin-top:9px;font-size:10.5px;font-weight:700;
+    letter-spacing:.05em;text-transform:uppercase;padding:3px 8px;border-radius:5px;
+    background:var(--accent-soft);color:var(--accent);border:1px solid var(--accent)}
+  .card .id .badge.ro{background:var(--no-soft);color:var(--no);border-color:var(--no)}
+  .card .id .badge.st{background:var(--stop-soft);color:var(--stop);border-color:var(--stop)}
+  dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:5px 14px;font-size:14px}
+  dt{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.05em;
+     font-weight:600;padding-top:3px;white-space:nowrap}
+  dd{margin:0}
+  code{font-family:var(--mono);font-size:12.5px;background:var(--bg);
+       border:1px solid var(--line);border-radius:4px;padding:1px 5px}
+
+  .rules{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:8px 24px}
+  .rules li{margin:12px 0}
+  .stopline{background:var(--stop-soft);border:1px solid var(--stop);color:var(--stop);
+    border-radius:10px;padding:14px 18px;font-weight:600;margin-top:12px}
+  footer{margin-top:56px;padding-top:20px;border-top:1px solid var(--line);
+         color:var(--muted);font-size:12.5px}
+  @media (max-width:720px){
+    .card{grid-template-columns:1fr;gap:14px}
+    .branches{grid-template-columns:1fr}
+    dl{grid-template-columns:1fr;gap:2px}
+    dt{margin-top:10px}
+    .arrow{display:none}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>Команда агентів</h1>
+  <p class="sub">Capstone · LEAD оркеструє, агенти виконують. LEAD сам код не пише.</p>
+</header>
+
+<h2>Розвилка — перше питання LEAD</h2>
+<div class="gate">
+  <div class="q">Це йде у Storybook?
+    <small>LEAD питає це ЩОРАЗУ, щойно прилітає лінка або задача — до будь-якої роботи.</small>
+  </div>
+  <div class="branches">
+    <div class="br y">
+      <div class="lbl">Так — це компонент</div>
+      <div class="chain">spec → builder → reviewer → <b>storybook</b> → ⏸ ОК → shipper</div>
+      <div class="why">Компонент показуємо ізольовано: локальний Storybook + Chromatic-прев'ю. Пуш тільки після живого ОК.</div>
+    </div>
+    <div class="br n">
+      <div class="lbl">Ні — застосунок / сторінка</div>
+      <div class="chain">spec → builder → reviewer → shipper</div>
+      <div class="why">Storybook пропускаємо. Перевірка — на живій збірці, деплой Cloudflare з пушу.</div>
+    </div>
+  </div>
+</div>
+
+<h2>Послідовність кроків</h2>
+<div class="flow">
+  <div class="step"><div class="n">01</div><div class="t">spec</div><div class="d">SPEC.md з ТЗ / Figma</div></div>
+  <div class="arrow">→</div>
+  <div class="step"><div class="n">02</div><div class="t">builder</div><div class="d">Vite + React + TS</div></div>
+  <div class="arrow">→</div>
+  <div class="step"><div class="n">03</div><div class="t">reviewer</div><div class="d">PASS / FAIL</div></div>
+  <div class="arrow">→</div>
+  <div class="step" style="border-color:var(--yes)"><div class="n" style="color:var(--yes)">04 · тільки компонент</div><div class="t">storybook</div><div class="d">лінк story + Chromatic</div></div>
+  <div class="arrow">→</div>
+  <div class="step" style="border-color:var(--stop)"><div class="n" style="color:var(--stop)">⏸ ГЕЙТ</div><div class="t">твоє ОК</div><div class="d">людина дивиться прев'ю</div></div>
+  <div class="arrow">→</div>
+  <div class="step"><div class="n">05</div><div class="t">shipper</div><div class="d">commit + push</div></div>
+</div>
+<div class="stopline">FAIL від reviewer → повертаємось на builder. Без ОК від людини shipper не запускається ніколи.</div>
+
+<h2>Хто за що відповідає</h2>
+<div class="cards">
+
+  <div class="card">
+    <div class="id">
+      <div class="nm">spec</div><div class="role">Аналітик</div>
+      <div class="badge">крок 01</div>
+    </div>
+    <dl>
+      <dt>Робить</dt><dd>Читає ТЗ і Figma-лінк, витягує токени й структуру, пише <code>SPEC.md</code>.</dd>
+      <dt>Віддає</dt><dd>Екрани, props, <b>усі стани</b>, поведінка, edge cases, адаптив, a11y-вимоги, acceptance criteria.</dd>
+      <dt>Зона</dt><dd>Єдине джерело правди для всіх наступних. Що не в SPEC — того не існує.</dd>
+      <dt>Не робить</dt><dd>Не пише код. Не вигадує вимоги — невідоме йде у «Відкриті питання».</dd>
+    </dl>
+  </div>
+
+  <div class="card">
+    <div class="id">
+      <div class="nm">builder</div><div class="role">Розробник</div>
+      <div class="badge">крок 02</div>
+    </div>
+    <dl>
+      <dt>Робить</dt><dd>Реалізує SPEC на Vite + React + TypeScript. Повторює патерни проєкту.</dd>
+      <dt>Віддає</dt><dd>Код з усіма станами та edge cases, зелений <code>tsc --noEmit</code> і білд.</dd>
+      <dt>Зона</dt><dd>Чисто, просто, без over-engineering. Без зайвих залежностей. Без <code>any</code>.</dd>
+      <dt>Не робить</dt><dd>Не розширює scope. Не хардкодить секрети. Не рапортує «готово» на червоній збірці.</dd>
+    </dl>
+  </div>
+
+  <div class="card">
+    <div class="id">
+      <div class="nm">reviewer</div><div class="role">Рев'ювер</div>
+      <div class="badge ro">read-only</div>
+    </div>
+    <dl>
+      <dt>Робить</dt><dd>Звіряє код з acceptance criteria SPEC, перевіряє кожен стан, базову a11y.</dd>
+      <dt>Віддає</dt><dd>Вердикт <b>PASS</b> або <b>FAIL</b> + нумерований список фіксів із <code>file:line</code>.</dd>
+      <dt>Зона</dt><dd>Ворота якості. Файли не чіпає — тільки читає й запускає перевірки.</dd>
+      <dt>Не робить</dt><dd>Не фіксить сам. Не валить за смаківщину — стиль це не FAIL.</dd>
+    </dl>
+  </div>
+
+  <div class="card">
+    <div class="id">
+      <div class="nm">storybook</div><div class="role">Демонстратор</div>
+      <div class="badge st">⏸ стоп на ОК</div>
+    </div>
+    <dl>
+      <dt>Коли</dt><dd>Тільки якщо на питання «це у Storybook?» відповідь <b>ТАК</b>.</dd>
+      <dt>Робить</dt><dd>Пише <code>*.stories.tsx</code> — по story на кожен стан. Піднімає локальний Storybook. Запускає <code>npx chromatic</code>.</dd>
+      <dt>Віддає</dt><dd>Лінк на локальну story + Chromatic build URL + preview URL.</dd>
+      <dt>Зона</dt><dd>Показати живий компонент людині до пушу. Токен — лише з env.</dd>
+      <dt>Не робить</dt><dd><b>Не комітить і не пушить.</b> Зупиняється й чекає явного ОК.</dd>
+    </dl>
+  </div>
+
+  <div class="card">
+    <div class="id">
+      <div class="nm">shipper</div><div class="role">Реліз</div>
+      <div class="badge">крок 05</div>
+    </div>
+    <dl>
+      <dt>Коли</dt><dd>Тільки після явного «ОК» від людини. Мовчання і PASS від reviewer — не ОК.</dd>
+      <dt>Робить</dt><dd>Перевіряє діф на секрети, feature-гілка, Conventional Commit, <code>git push</code>.</dd>
+      <dt>Віддає</dt><dd>Гілка + хеш, Chromatic build URL, live URL (Cloudflare), статус CI.</dd>
+      <dt>Зона</dt><dd>Єдиний, хто торкається remote. Chromatic і Cloudflare деплояться самі з пушу.</dd>
+      <dt>Не робить</dt><dd>Не комітить у <code>main</code>. Не вигадує URL. Не оголошує успіх на червоному CI.</dd>
+    </dl>
+  </div>
+
+</div>
+
+<h2>Правила LEAD</h2>
+<ol class="rules">
+  <li>Прилетіла лінка або задача — <b>перше питання завжди одне</b>: це йде у Storybook чи ні. До цього ніяких агентів.</li>
+  <li>Сам код не пишу. Уточнюю, розбиваю на кроки, делегую, зшиваю результати.</li>
+  <li>Агенти йдуть строго послідовно — кожен спирається на артефакт попереднього.</li>
+  <li><b>FAIL</b> від reviewer → назад на builder зі списком фіксів. Повторюємо, поки не PASS.</li>
+  <li>Гейт після storybook — жорсткий. Прев'ю показано, далі тиша, поки людина не скаже ОК.</li>
+  <li>Нічого не публікується назовні без явного підтвердження.</li>
+</ol>
+
+<footer>
+  Агенти живуть у <code>.claude/agents/</code> · <code>spec.md</code> · <code>builder.md</code> · <code>reviewer.md</code> · <code>storybook.md</code> · <code>shipper.md</code>
+</footer>
+
+</div>
+</body>
+</html>
