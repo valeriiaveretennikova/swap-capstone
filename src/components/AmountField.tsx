@@ -11,8 +11,6 @@ interface AmountFieldProps {
   kind: ActiveSource;
   label: string;
   asset: Asset;
-  /** The opposite field's asset — locked in this field's dropdown. */
-  lockedAsset: Asset;
   value: string;
   balance: number;
   disabled: boolean;
@@ -41,7 +39,6 @@ export function AmountField({
   kind,
   label,
   asset,
-  lockedAsset,
   value,
   balance,
   disabled,
@@ -67,14 +64,18 @@ export function AmountField({
     .filter(Boolean)
     .join(' ');
 
-  const cardClasses = [styles.card, hasError ? styles.cardError : '', disabled ? styles.cardDisabled : '']
+  const cardClasses = [
+    styles.card,
+    hasError ? styles.cardError : '',
+    disabled ? styles.cardDisabled : '',
+  ]
     .filter(Boolean)
     .join(' ');
 
   return (
     <div className={styles.field}>
       <div className={cardClasses}>
-        <div className={styles.topRow}>
+        <div className={styles.labelRow}>
           <label id={labelId} className={styles.label} htmlFor={inputId}>
             {label}
           </label>
@@ -96,13 +97,8 @@ export function AmountField({
           </div>
         </div>
 
-        <div className={styles.bottomRow}>
-          <TokenSelect
-            value={asset}
-            lockedAsset={lockedAsset}
-            labelId={labelId}
-            onSelect={onAssetChange}
-          />
+        <div className={styles.valueRow}>
+          <TokenSelect value={asset} labelId={labelId} onSelect={onAssetChange} />
           <input
             id={inputId}
             ref={inputRef}

@@ -7,16 +7,25 @@ import { Button } from './Button';
 import { ErrorBanner } from './ErrorBanner';
 import { RateLine } from './RateLine';
 import { SwapArrowButton } from './SwapArrowButton';
-import type { ActiveSource, Asset, FormCore, FormState, Prices, RatesStatus } from '../types';
+import type {
+  ActiveSource,
+  Asset,
+  FormCore,
+  FormFocusTarget,
+  FormState,
+  Prices,
+  RingProgress,
+} from '../types';
 import styles from './SwapForm.module.css';
 
 interface SwapFormProps {
   core: FormCore;
   formState: FormState;
   prices: Prices | null;
-  ratesStatus: RatesStatus;
+  ring: RingProgress;
   isStale: boolean;
-  focusSendOnMount: boolean;
+  /** §14 — deliberate focus move when this view mounts after a view change. */
+  focusTarget: FormFocusTarget;
   ctaRef: RefObject<HTMLButtonElement | null>;
   sendInputRef: RefObject<HTMLInputElement | null>;
   onChangeAmount: (field: ActiveSource, value: string) => void;
@@ -41,9 +50,9 @@ export function SwapForm({
   core,
   formState,
   prices,
-  ratesStatus,
+  ring,
   isStale,
-  focusSendOnMount,
+  focusTarget,
   ctaRef,
   sendInputRef,
   onChangeAmount,
@@ -57,9 +66,15 @@ export function SwapForm({
   const bannerId = useId();
 
   useEffect(() => {
-    if (!focusSendOnMount) return;
+    if (focusTarget === null) return;
+    const cta = ctaRef.current;
+    // A disabled CTA cannot take focus, so the input is the fallback (§14).
+    if (focusTarget === 'cta' && cta && !cta.disabled) {
+      cta.focus();
+      return;
+    }
     sendInputRef.current?.focus();
-  }, [focusSendOnMount, sendInputRef]);
+  }, [focusTarget, ctaRef, sendInputRef]);
 
   const isRateError = formState === 'rate-error';
   const hasFundsError = formState === 'insufficient-funds';
@@ -77,19 +92,21 @@ export function SwapForm({
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (formState !== 'valid') return;
+    // Enter submits before the input's `blur` runs, so a partial value such as
+    // `100.` would otherwise reach the order snapshot unnormalised (§9).
+    onBlurAmount(core.activeSource);
     onContinue();
   };
 
   return (
-    <form className={styles.card} onSubmit={handleSubmit} noValidate>
+    <form className={styles.form} onSubmit={handleSubmit} noValidate>
       <h1 className={styles.heading}>Exchange</h1>
 
-      <div className={styles.fields}>
+      <div className={styles.content}>
         <AmountField
           kind="send"
           label="You send"
           asset={core.sendAsset}
-          lockedAsset={core.receiveAsset}
           value={sendDisplay}
           balance={MOCK_BALANCES[core.sendAsset]}
           disabled={isRateError}
@@ -110,13 +127,10 @@ export function SwapForm({
           onMax={onMax}
         />
 
-        <SwapArrowButton disabled={isRateError} onClick={onSwap} />
-
         <AmountField
           kind="receive"
           label="You receive"
           asset={core.receiveAsset}
-          lockedAsset={core.sendAsset}
           value={receiveDisplay}
           balance={MOCK_BALANCES[core.receiveAsset]}
           disabled={isRateError}
@@ -127,29 +141,33 @@ export function SwapForm({
           onBlur={() => onBlurAmount('receive')}
           onAssetChange={(asset) => onSelectAsset('receive', asset)}
         />
+
+        <SwapArrowButton disabled={isRateError} hasHelperText={isBelowMin} onClick={onSwap} />
       </div>
 
       {hasFundsError && <ErrorBanner id={bannerId} variant="insufficient-funds" />}
       {isRateError && <ErrorBanner id={bannerId} variant="rate-error" onRetry={onRetry} />}
 
-      <RateLine
-        sendAsset={core.sendAsset}
-        receiveAsset={core.receiveAsset}
-        prices={prices}
-        status={ratesStatus}
-        isStale={isStale}
-        hasRateError={isRateError}
-      />
+      <div className={styles.actions}>
+        <RateLine
+          sendAsset={core.sendAsset}
+          receiveAsset={core.receiveAsset}
+          prices={prices}
+          ring={ring}
+          isStale={isStale}
+          hasRateError={isRateError}
+        />
 
-      <Button
-        ref={ctaRef}
-        variant="primary"
-        type="submit"
-        disabled={formState !== 'valid'}
-        loading={formState === 'rate-loading'}
-      >
-        {ctaLabel(formState, core.sendAsset)}
-      </Button>
+        <Button
+          ref={ctaRef}
+          variant="primary"
+          type="submit"
+          disabled={formState !== 'valid'}
+          loading={formState === 'rate-loading'}
+        >
+          {ctaLabel(formState, core.sendAsset)}
+        </Button>
+      </div>
     </form>
   );
 }

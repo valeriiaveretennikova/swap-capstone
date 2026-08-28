@@ -9,8 +9,9 @@ interface ButtonProps {
   disabled?: boolean;
   loading?: boolean;
   onClick?: () => void;
-  ariaLabel?: string;
   className?: string;
+  /** §14 — a stable name for labels whose text changes (e.g. a countdown). */
+  'aria-label'?: string;
   ref?: Ref<HTMLButtonElement>;
 }
 
@@ -22,8 +23,8 @@ export function Button({
   disabled = false,
   loading = false,
   onClick,
-  ariaLabel,
   className,
+  'aria-label': ariaLabel,
   ref,
 }: ButtonProps) {
   const classes = [styles.button, styles[variant], className].filter(Boolean).join(' ');
@@ -34,8 +35,8 @@ export function Button({
       type={type}
       className={classes}
       disabled={disabled}
-      onClick={onClick}
       aria-label={ariaLabel}
+      onClick={onClick}
     >
       {loading && <Spinner />}
       <span>{children}</span>

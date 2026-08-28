@@ -3,14 +3,16 @@
   flex-direction: column;
 }
 
-/* §11.7 — the 1px/2px outline is an inset shadow so state changes cause no
-   layout shift; colours and widths are exactly those of the spec. */
+/* §11.7 — 380x84: padding 16, a 16px label row, a 4px gap and a 32px value row.
+   The 1px/2px outline is an inset shadow so state changes cause no layout
+   shift; colours and widths are exactly those of the spec. */
 .card {
+  /* Also the anchor the dropdown list is matched to below 768px (§13). */
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
-  min-height: 102px;
+  gap: var(--space-1);
+  min-height: var(--field-min-height);
   padding: var(--space-4);
   background: var(--bg-page);
   border-radius: var(--radius-m);
@@ -18,10 +20,12 @@
   transition: box-shadow var(--duration-base) ease;
 }
 
+/* §11.7 / RD-7 — the single focus indicator lives on the card. */
 .card:has(input:focus) {
   box-shadow: inset 0 0 0 2px var(--border-focus);
 }
 
+/* §6.1 precedence — red beats blue, even while the input is focused. */
 .cardError,
 .cardError:has(input:focus) {
   box-shadow: inset 0 0 0 2px var(--error-border);
@@ -31,11 +35,12 @@
   box-shadow: inset 0 0 0 1px var(--disabled-bg);
 }
 
-.topRow {
+.labelRow {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--space-2);
+  min-height: 16px;
   min-width: 0;
 }
 
@@ -53,7 +58,7 @@
 .balanceRow {
   display: flex;
   align-items: center;
-  gap: var(--space-1);
+  gap: var(--space-2);
   min-width: 0;
 }
 
@@ -72,14 +77,16 @@
   white-space: nowrap;
 }
 
-/* §13 — the chip keeps a 40px hit area without stretching the row. */
+/* §13 — the chip keeps a 40px hit area without stretching the 16px row. */
 .maxChip {
   flex: none;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
+  min-width: 28px;
   min-height: var(--tap-size);
   margin-block: -12px;
-  padding: 0 var(--space-2);
+  padding: 0;
   background: none;
   border: none;
   border-radius: var(--radius-full);
@@ -102,24 +109,34 @@
   cursor: not-allowed;
 }
 
-.bottomRow {
+.valueRow {
   display: flex;
   align-items: center;
   gap: var(--space-3);
+  min-height: 32px;
   min-width: 0;
 }
 
 .value {
   flex: 1;
   min-width: 0;
-  min-height: var(--tap-size);
+  height: 32px;
   padding: 0;
-  background: none;
-  border: none;
-  border-radius: var(--radius-s);
   font: var(--font-body-lg);
   color: var(--text-primary);
   text-align: right;
+}
+
+/* §11.7 / criterion 100 — the input renders no focus affordance of its own:
+   no outline, no border, no box-shadow, no background change, in any state. */
+.value,
+.value:hover,
+.value:focus,
+.value:focus-visible {
+  background: transparent;
+  border: none;
+  outline: none;
+  box-shadow: none;
 }
 
 .value::placeholder {
@@ -146,7 +163,10 @@
 }
 
 @media (max-width: 767px) {
+  /* §13 — 40px hit area without stretching the 32px value row. */
   .value {
+    min-height: var(--tap-size);
+    margin-block: -4px;
     font: var(--font-amount-18);
   }
 

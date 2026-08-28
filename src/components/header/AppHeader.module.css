@@ -1,0 +1,105 @@
+/* Figma `133:1419` — 1440x64, logo at x=132, menu 172 wide ending at x=1308. */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-6);
+  height: var(--header-height);
+  /* 132px at the 1440 design width, then proportional (132 / 1440 = 9.17%), so
+     the fixed-width logo and menu still fit between 768px and 1440px. */
+  padding-inline: min(var(--header-padding-x), 9.17%);
+}
+
+/* Logo block 198x32: mark 30.46x28.95, gap 8, wordmark 158.4x12.95. */
+.logo {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.logoMark {
+  width: 30.46px;
+  height: 28.95px;
+}
+
+.logoWordmark {
+  width: 158.4px;
+  height: 12.95px;
+}
+
+/* Menu block 172x32 — wallet glyph + balance, then 24 to the gear. */
+.menu {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: var(--space-6);
+  height: 32px;
+}
+
+/* The 32x32 wallet box, gap 8, then the total. */
+.balance {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* The 20x20 glyph inset 6 in a 32x32 box — no circle behind it. */
+.walletBadge {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  color: var(--text-primary);
+}
+
+.balanceText {
+  overflow: hidden;
+  font: var(--font-body-sm-medium);
+  color: var(--text-primary);
+  white-space: nowrap;
+  /* Last-resort guard: an unusually long total ellipsises instead of widening
+     the document. It never triggers at the widths the design covers. */
+  text-overflow: ellipsis;
+}
+
+.settings {
+  flex: none;
+  color: var(--text-primary);
+}
+
+/* [FALLBACK] — Figma has no mobile header. The row is 132 + 198 + 24 + 172 + 132
+   = 658 wide, so 768 needs no change at all; from there down only the padding
+   shrinks, and everything still fits to 440px. */
+@media (max-width: 767px) {
+  .header {
+    padding-inline: var(--space-4);
+  }
+}
+
+/* [FALLBACK] — the balance stays visible as long as it fits, because it is the
+   one piece of information in the header. It stops fitting next to the
+   fixed-width logo at 440px (198 logo + 24 + 32 glyph + 8 + ~85 total + 24 + 24
+   gear + 32 padding = 427), so below that it is the part that goes: dropping a
+   glyph instead would leave the row visibly unbalanced against the design. */
+@media (max-width: 439px) {
+  .balanceText {
+    display: none;
+  }
+}
+
+/* [FALLBACK] — at 320px even the logo + wallet glyph + gear overflow by a few px
+   (198 + 24 + 32 + 24 + 24 + 24 padding = 326 > 320), and no horizontal scroll
+   is non-negotiable, so the whole balance group goes and the logo and the gear
+   remain — the glyph it would keep is decorative anyway. */
+@media (max-width: 359px) {
+  .header {
+    padding-inline: var(--space-3);
+  }
+
+  .balance {
+    display: none;
+  }
+}

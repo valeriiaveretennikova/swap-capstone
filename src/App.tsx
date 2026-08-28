@@ -14,30 +14,34 @@ import {
 import { formatAmountWithTicker, formatRateText } from './lib/format';
 import { deriveFormState } from './lib/formState';
 import { generateOrderId } from './lib/orderId';
-import { ConfirmModal } from './components/ConfirmModal';
+import { AppHeader } from './components/header/AppHeader';
+import { ConfirmView } from './components/ConfirmView';
+import { ExchangeCard } from './components/ExchangeCard';
 import { StatusAnnouncer } from './components/StatusAnnouncer';
-import { SuccessPanel } from './components/SuccessPanel';
+import { SuccessView } from './components/SuccessView';
 import { SwapForm } from './components/SwapForm';
-import type { ActiveSource, Asset, FormCore, Order, View } from './types';
+import type { ActiveSource, Asset, FormCore, FormFocusTarget, Order, View } from './types';
 import styles from './App.module.css';
 
 export default function App() {
   const [view, setView] = useState<View>('form');
   const [core, setCore] = useState<FormCore>(INITIAL_CORE);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [order, setOrder] = useState<Order | null>(null);
-  const [announcement, setAnnouncement] = useState('');
-  const [focusSendOnMount, setFocusSendOnMount] = useState(false);
+  const [announcement, setAnnouncement] = useState({ text: '', nonce: 0 });
+  const [formFocus, setFormFocus] = useState<FormFocusTarget>(null);
 
-  const contentRef = useRef<HTMLDivElement>(null);
   const ctaRef = useRef<HTMLButtonElement>(null);
   const sendInputRef = useRef<HTMLInputElement>(null);
 
+  /** §14 — every call is a new announcement, even with an unchanged message. */
+  const announce = useCallback((text: string) => {
+    setAnnouncement((current) => ({ text, nonce: current.nonce + 1 }));
+  }, []);
+
   const isPageHidden = usePageHidden();
-  const { prices, status, isStale, refresh } = usePrices(
-    isModalOpen || isPageHidden || view === 'success',
-  );
+  // SPEC §8.1 — polling runs only in the form view of a visible tab.
+  const { prices, status, isStale, refresh, ring } = usePrices(view !== 'form' || isPageHidden);
 
   const formState = deriveFormState({ core, prices, ratesStatus: status });
 
@@ -46,27 +50,17 @@ export default function App() {
     setCore((current) => withPassive(current, prices));
   }, [prices]);
 
-  const restoreFocus = useCallback(() => {
-    window.requestAnimationFrame(() => {
-      const cta = ctaRef.current;
-      if (cta && !cta.disabled) {
-        cta.focus();
-        return;
-      }
-      sendInputRef.current?.focus();
-    });
-  }, []);
+  const backToForm = useCallback(() => {
+    setFormFocus('cta');
+    setView('form');
+    announce('Exchange form');
+  }, [announce]);
 
-  const closeModal = useCallback(() => {
-    setIsModalOpen(false);
-    restoreFocus();
-  }, [restoreFocus]);
-
-  // SPEC §8.6 — a refreshed rate that breaks validation closes the modal.
+  // SPEC §8.6 — a refreshed rate that breaks validation returns to the form.
   useEffect(() => {
-    if (!isModalOpen || isSubmitting || formState === 'valid') return;
-    closeModal();
-  }, [isModalOpen, isSubmitting, formState, closeModal]);
+    if (view !== 'confirm' || isSubmitting || formState === 'valid') return;
+    backToForm();
+  }, [view, isSubmitting, formState, backToForm]);
 
   const handleChangeAmount = useCallback(
     (field: ActiveSource, value: string) => {
@@ -100,8 +94,9 @@ export default function App() {
 
   const handleContinue = useCallback(() => {
     if (formState !== 'valid') return;
-    setIsModalOpen(true);
-  }, [formState]);
+    setView('confirm');
+    announce('Confirm exchange step');
+  }, [formState, announce]);
 
   const handleConfirm = useCallback(() => {
     if (isSubmitting || prices === null) return;
@@ -122,67 +117,72 @@ export default function App() {
 
     window.setTimeout(() => {
       setOrder(nextOrder);
-      setIsModalOpen(false);
       setIsSubmitting(false);
       setView('success');
-      setAnnouncement('Exchange successful');
+      announce('Exchange successful');
     }, SUBMIT_DELAY_MS);
-  }, [isSubmitting, prices, core]);
+  }, [isSubmitting, prices, core, announce]);
 
-  const handleRateUpdated = useCallback(() => setAnnouncement('Rate updated'), []);
+  const handleRateUpdated = useCallback(() => announce('Rate updated'), [announce]);
 
   // SPEC §8.7 — Done is a full reset to Screen 1.
   const handleDone = useCallback(() => {
     setCore(INITIAL_CORE);
     setOrder(null);
     setIsSubmitting(false);
-    setAnnouncement('');
-    setFocusSendOnMount(true);
+    setFormFocus('input');
     setView('form');
-  }, []);
+    announce('Exchange form');
+  }, [announce]);
+
+  // A rate collapse while confirming lands on the form view in the same paint.
+  const resolvedView: View = view === 'confirm' && prices === null ? 'form' : view;
 
   return (
-    <main className={styles.page}>
-      <div className={styles.content} ref={contentRef}>
-        {view === 'form' && (
-          <SwapForm
-            core={core}
-            formState={formState}
-            prices={prices}
-            ratesStatus={status}
-            isStale={isStale}
-            focusSendOnMount={focusSendOnMount}
-            ctaRef={ctaRef}
-            sendInputRef={sendInputRef}
-            onChangeAmount={handleChangeAmount}
-            onBlurAmount={handleBlurAmount}
-            onSelectAsset={handleSelectAsset}
-            onSwap={handleSwap}
-            onMax={handleMax}
-            onRetry={handleRetry}
-            onContinue={handleContinue}
-          />
-        )}
+    <>
+      <AppHeader prices={prices} />
 
-        {view === 'success' && order && (
-          <SuccessPanel order={order} onDone={handleDone} onAnnounce={setAnnouncement} />
-        )}
-      </div>
+      <main className={styles.page}>
+        <ExchangeCard view={resolvedView}>
+          {resolvedView === 'form' && (
+            <SwapForm
+              core={core}
+              formState={formState}
+              prices={prices}
+              ring={ring}
+              isStale={isStale}
+              focusTarget={formFocus}
+              ctaRef={ctaRef}
+              sendInputRef={sendInputRef}
+              onChangeAmount={handleChangeAmount}
+              onBlurAmount={handleBlurAmount}
+              onSelectAsset={handleSelectAsset}
+              onSwap={handleSwap}
+              onMax={handleMax}
+              onRetry={handleRetry}
+              onContinue={handleContinue}
+            />
+          )}
 
-      {isModalOpen && prices !== null && (
-        <ConfirmModal
-          core={core}
-          prices={prices}
-          isSubmitting={isSubmitting}
-          backgroundRef={contentRef}
-          onBack={closeModal}
-          onConfirm={handleConfirm}
-          onRefresh={refresh}
-          onRateUpdated={handleRateUpdated}
-        />
-      )}
+          {resolvedView === 'confirm' && prices !== null && (
+            <ConfirmView
+              core={core}
+              prices={prices}
+              isSubmitting={isSubmitting}
+              onBack={backToForm}
+              onConfirm={handleConfirm}
+              onRefresh={refresh}
+              onRateUpdated={handleRateUpdated}
+            />
+          )}
 
-      <StatusAnnouncer message={announcement} />
-    </main>
+          {resolvedView === 'success' && order && (
+            <SuccessView order={order} onDone={handleDone} onAnnounce={announce} />
+          )}
+        </ExchangeCard>
+
+        <StatusAnnouncer message={announcement.text} nonce={announcement.nonce} />
+      </main>
+    </>
   );
 }

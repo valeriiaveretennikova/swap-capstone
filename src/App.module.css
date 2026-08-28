@@ -1,8 +1,10 @@
 .page {
   position: relative;
   display: flex;
+  align-items: center;
   justify-content: center;
-  min-height: 100vh;
+  /* The static header sits above this block, so it comes off the viewport. */
+  min-height: calc(100vh - var(--header-height));
   padding: var(--space-4);
   overflow: hidden;
 }
@@ -31,13 +33,9 @@
   background: radial-gradient(circle, var(--blob-violet) 0%, var(--blob-violet-fade) 70%);
 }
 
-.content {
+.page > * {
   position: relative;
   z-index: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
 }
 
 @media (max-width: 767px) {
@@ -49,10 +47,6 @@
   .page::before,
   .page::after {
     display: none;
-  }
-
-  .content {
-    align-items: flex-start;
   }
 }
 

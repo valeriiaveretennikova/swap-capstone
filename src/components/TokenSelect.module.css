@@ -3,22 +3,29 @@
   flex: none;
 }
 
+/* §11.7 / RD-11 — the trigger has no border and no background of its own. */
 .trigger {
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
-  min-height: var(--tap-size);
-  padding: var(--space-2);
-  background: var(--bg-page);
-  border: 1px solid var(--border-primary);
+  height: 32px;
+  padding: 0;
+  background: none;
+  border: none;
   border-radius: var(--radius-s);
   cursor: pointer;
-  transition: background-color var(--duration-base) ease, border-color var(--duration-base) ease;
 }
 
-.trigger:hover {
-  background: var(--bg-page);
-  border-color: var(--secondary-hover-border);
+/* The white logo box is the design's affordance in place of a border. */
+.logoBox {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: var(--bg-primary);
+  border-radius: var(--radius-full);
 }
 
 .ticker {
@@ -28,9 +35,12 @@
 
 .chevron {
   flex: none;
+  width: 24px;
+  height: 24px;
   color: var(--text-primary);
 }
 
+/* E25 — above the swap button (z-index 1), which is above the card seam. */
 .list {
   position: absolute;
   top: calc(100% + var(--space-1));
@@ -91,25 +101,10 @@
 
 .check {
   flex: none;
+  width: 24px;
+  height: 24px;
   margin-left: auto;
   color: var(--accent);
-}
-
-.optionLocked {
-  cursor: not-allowed;
-}
-
-.optionLocked .optionTicker,
-.optionLocked .optionName {
-  color: var(--text-disabled);
-}
-
-.lockedIcon {
-  opacity: 0.4;
-}
-
-.optionLocked:hover {
-  background: transparent;
 }
 
 /* §13 — below 768px the list is width-matched to the amount card, which is the
@@ -119,9 +114,15 @@
     position: static;
   }
 
+  /* The visual row stays 32px tall while the hit area reaches 40px (§13). */
+  .trigger {
+    min-height: var(--tap-size);
+    margin-block: -4px;
+  }
+
   .list {
-    left: 0;
     right: 0;
+    left: 0;
     min-width: 0;
   }
 

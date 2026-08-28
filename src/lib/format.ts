@@ -87,7 +87,7 @@ export function formatPlain(value: number, decimals: number): string {
   return plainFormatter(decimals).format(value);
 }
 
-/** Fixed notation with grouping — passive field, modal and success screen. */
+/** Fixed notation with grouping — passive field, confirm and success views. */
 export function formatGrouped(value: number, decimals: number): string {
   return groupedFormatter(decimals).format(value);
 }
@@ -112,7 +112,7 @@ export function formatRawGrouped(raw: string, decimals: number): string {
   return formatGrouped(Number(raw), decimals);
 }
 
-/** `{amount} {TICKER}` with grouping — modal rows and success summary. */
+/** `{amount} {TICKER}` with grouping — confirm view summary rows. */
 export function formatAmountWithTicker(raw: string, asset: Asset): string {
   const { decimals, ticker } = ASSETS[asset];
   return `${formatRawGrouped(raw, decimals)} ${ticker}`;

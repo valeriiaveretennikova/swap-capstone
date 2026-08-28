@@ -1,0 +1,53 @@
+.ring {
+  flex: none;
+  display: block;
+}
+
+.track {
+  stroke: var(--ring-track);
+}
+
+.arc {
+  stroke: var(--ring-progress);
+}
+
+/* Duration and delay come from the poll window in `usePrices`. */
+.fill {
+  animation: ring-fill var(--ring-duration) linear both;
+  animation-delay: var(--ring-delay);
+}
+
+/* The whole 16x16 box turns, so the rotation centre needs no SVG plumbing.
+   The keyframes are local: CSS Modules scope `animation-name`, so keyframes
+   declared in a global stylesheet are unreachable from here. */
+.spinning {
+  animation: ring-spin 800ms linear infinite;
+}
+
+@keyframes ring-spin {
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+@keyframes ring-fill {
+  from {
+    stroke-dashoffset: var(--ring-length);
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* §8.1 / E19 — the fill is information (time left to the next rate), not
+     decoration, so it survives; only the in-flight rotation is dropped. The
+     `!important` re-arms the duration that the global reduce rule zeroes out. */
+  .fill {
+    animation-duration: var(--ring-duration) !important;
+  }
+
+  .spinning {
+    animation: none;
+  }
+}

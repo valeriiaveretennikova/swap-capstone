@@ -1,29 +1,31 @@
 import { crossRate } from '../lib/exchange';
 import { formatRateText } from '../lib/format';
-import { Spinner } from './Spinner';
-import type { Asset, Prices, RatesStatus } from '../types';
+import { RateRing } from './RateRing';
+import type { Asset, Prices, RingProgress } from '../types';
 import styles from './RateLine.module.css';
 
 interface RateLineProps {
   sendAsset: Asset;
   receiveAsset: Asset;
   prices: Prices | null;
-  status: RatesStatus;
+  ring: RingProgress;
   isStale: boolean;
   hasRateError: boolean;
 }
 
-/** SPEC §8.1 — not a live region: a 10 s poll would spam a screen reader. */
+/**
+ * SPEC §8.1 — sits directly above the CTA, centred. Not a live region: a 10 s
+ * poll would spam a screen reader. The ring is always rendered; it fills towards
+ * the next price request and shows a bare track when there is no rate at all.
+ */
 export function RateLine({
   sendAsset,
   receiveAsset,
   prices,
-  status,
+  ring,
   isStale,
   hasRateError,
 }: RateLineProps) {
-  const isFetching = status === 'loading' || status === 'refreshing';
-
   const text = hasRateError
     ? 'Rate unavailable'
     : prices === null
@@ -34,7 +36,7 @@ export function RateLine({
     <div className={styles.wrapper}>
       <p className={styles.line}>
         {text}
-        {isFetching && <Spinner />}
+        <RateRing progress={hasRateError ? { ...ring, phase: 'idle' } : ring} />
       </p>
       {isStale && <p className={styles.caption}>Rate may be outdated</p>}
     </div>

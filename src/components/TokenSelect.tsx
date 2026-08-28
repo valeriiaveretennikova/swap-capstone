@@ -5,18 +5,25 @@ import { ChevronIcon, CheckIcon } from './icons';
 import type { Asset } from '../types';
 import styles from './TokenSelect.module.css';
 
+/** §11.10 — 28px inside the trigger's white logo box, 24px in the list. */
+const TRIGGER_ICON_SIZE = 28;
+const OPTION_ICON_SIZE = 24;
+
 /** 6 items x 40px + list padding + gaps — used only to decide the flip side. */
 const ESTIMATED_LIST_HEIGHT = 284;
 
 interface TokenSelectProps {
   value: Asset;
-  /** The asset picked in the opposite field: listed, but not selectable (§8.5). */
-  lockedAsset: Asset;
   labelId: string;
   onSelect: (asset: Asset) => void;
 }
 
-export function TokenSelect({ value, lockedAsset, labelId, onSelect }: TokenSelectProps) {
+/**
+ * SPEC §11.7 CurrencySelector + §8.5 dropdown. RD-4: every one of the six
+ * options is selectable and none is ever marked unavailable — the check mark on
+ * the current asset is the only selection cue.
+ */
+export function TokenSelect({ value, labelId, onSelect }: TokenSelectProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [dropUp, setDropUp] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -64,21 +71,13 @@ export function TokenSelect({ value, lockedAsset, labelId, onSelect }: TokenSele
     };
   }, [isOpen]);
 
-  const nextEnabledIndex = (from: number, delta: number): number => {
-    let index = from;
-    for (let step = 0; step < ASSET_LIST.length; step += 1) {
-      index = (index + delta + ASSET_LIST.length) % ASSET_LIST.length;
-      if (ASSET_LIST[index] !== lockedAsset) return index;
-    }
-    return from;
-  };
-
-  const edgeIndex = (edge: 'first' | 'last'): number =>
-    edge === 'first' ? nextEnabledIndex(ASSET_LIST.length - 1, 1) : nextEnabledIndex(0, -1);
+  /** All 6 options take part in the roving focus and it wraps around (§14). */
+  const step = (delta: number): number =>
+    (activeIndex + delta + ASSET_LIST.length) % ASSET_LIST.length;
 
   const select = (asset: Asset) => {
-    if (asset === lockedAsset) return;
-    onSelect(asset);
+    // E9a — a re-pick of the current asset closes the list and calls no setter.
+    if (asset !== value) onSelect(asset);
     close(true);
   };
 
@@ -92,19 +91,19 @@ export function TokenSelect({ value, lockedAsset, labelId, onSelect }: TokenSele
     switch (event.key) {
       case 'ArrowDown':
         event.preventDefault();
-        setActiveIndex(nextEnabledIndex(activeIndex, 1));
+        setActiveIndex(step(1));
         break;
       case 'ArrowUp':
         event.preventDefault();
-        setActiveIndex(nextEnabledIndex(activeIndex, -1));
+        setActiveIndex(step(-1));
         break;
       case 'Home':
         event.preventDefault();
-        setActiveIndex(edgeIndex('first'));
+        setActiveIndex(0);
         break;
       case 'End':
         event.preventDefault();
-        setActiveIndex(edgeIndex('last'));
+        setActiveIndex(ASSET_LIST.length - 1);
         break;
       case 'Enter':
       case ' ':
@@ -136,7 +135,9 @@ export function TokenSelect({ value, lockedAsset, labelId, onSelect }: TokenSele
         onClick={() => (isOpen ? close(false) : open())}
         onKeyDown={handleTriggerKeyDown}
       >
-        <CoinIcon asset={value} />
+        <span className={styles.logoBox}>
+          <CoinIcon asset={value} size={TRIGGER_ICON_SIZE} />
+        </span>
         <span className={styles.ticker}>{ASSETS[value].ticker}</span>
         <ChevronIcon direction={isOpen ? 'up' : 'down'} className={styles.chevron} />
       </button>
@@ -150,28 +151,24 @@ export function TokenSelect({ value, lockedAsset, labelId, onSelect }: TokenSele
           className={`${styles.list} ${dropUp ? styles.dropUp : ''}`}
           onKeyDown={handleListKeyDown}
         >
-          {ASSET_LIST.map((asset, index) => {
-            const isLocked = asset === lockedAsset;
-            return (
-              <div
-                key={asset}
-                ref={(node) => {
-                  optionRefs.current[index] = node;
-                }}
-                role="option"
-                tabIndex={-1}
-                aria-selected={asset === value}
-                aria-disabled={isLocked || undefined}
-                className={`${styles.option} ${isLocked ? styles.optionLocked : ''}`}
-                onClick={() => select(asset)}
-              >
-                <CoinIcon asset={asset} className={isLocked ? styles.lockedIcon : undefined} />
-                <span className={styles.optionTicker}>{ASSETS[asset].ticker}</span>
-                <span className={styles.optionName}>{ASSETS[asset].name}</span>
-                {asset === value && <CheckIcon className={styles.check} />}
-              </div>
-            );
-          })}
+          {ASSET_LIST.map((asset, index) => (
+            <div
+              key={asset}
+              ref={(node) => {
+                optionRefs.current[index] = node;
+              }}
+              role="option"
+              tabIndex={-1}
+              aria-selected={asset === value}
+              className={styles.option}
+              onClick={() => select(asset)}
+            >
+              <CoinIcon asset={asset} size={OPTION_ICON_SIZE} />
+              <span className={styles.optionTicker}>{ASSETS[asset].ticker}</span>
+              <span className={styles.optionName}>{ASSETS[asset].name}</span>
+              {asset === value && <CheckIcon className={styles.check} />}
+            </div>
+          ))}
         </div>
       )}
     </div>

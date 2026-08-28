@@ -1,9 +1,11 @@
-.row {
-  display: flex;
-  justify-content: center;
-}
-
+/* §8.3 — top 68 puts the 40px button's centre on the seam at 88, overlapping
+   16px onto each card. z-index 1 keeps it above both card edges; the open
+   dropdown list stacks above it (E25). */
 .button {
+  position: absolute;
+  top: 68px;
+  left: 50%;
+  z-index: 1;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -13,8 +15,14 @@
   background: var(--bg-primary);
   border: 1px solid var(--border-primary);
   border-radius: var(--radius-full);
+  transform: translateX(-50%);
   cursor: pointer;
   transition: background-color var(--duration-base) ease, color var(--duration-base) ease;
+}
+
+/* The helper text slot (margin 4 + line 16) pushes the seam 20px down. */
+.buttonShifted {
+  top: 88px;
 }
 
 .button:hover:not(:disabled) {
@@ -29,15 +37,18 @@
 
 .button:disabled {
   color: var(--text-disabled);
+  border-color: var(--disabled-bg);
   cursor: not-allowed;
 }
 
 .icon {
+  width: 16px;
+  height: 16px;
   color: inherit;
   transition: transform var(--duration-slow) ease;
 }
 
-.button:not(:hover):not(:active) .icon {
+.button:not(:hover):not(:active):not(:disabled) .icon {
   color: var(--text-primary);
 }
 

@@ -1,18 +1,23 @@
 .wrapper {
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: var(--space-1);
 }
 
+/* §8.1 — rate text, then an 8px gap, then the 16px ring. */
 .line {
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  font: var(--font-caption-sm);
+  min-height: 16px;
+  font: var(--font-body-2sm);
   color: var(--text-secondary);
+  text-align: center;
 }
 
 .caption {
-  font: var(--font-caption-sm);
+  font: var(--font-body-2sm);
   color: var(--text-secondary);
+  text-align: center;
 }

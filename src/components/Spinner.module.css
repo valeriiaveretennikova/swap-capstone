@@ -1,10 +1,25 @@
-.spinner {
+.ring {
   flex: none;
   display: inline-block;
   width: 16px;
   height: 16px;
-  border: 2px solid var(--border-primary);
-  border-top-color: var(--accent);
+  border: 2px solid var(--ring-track);
+  border-top-color: var(--ring-progress);
   border-radius: var(--radius-full);
-  animation: spin 800ms linear infinite;
+  animation: spinner-spin 800ms linear infinite;
+}
+
+/* Local keyframes: CSS Modules scope `animation-name`, so keyframes declared in
+   a global stylesheet are unreachable from here. */
+@keyframes spinner-spin {
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+/* §12 / E19 — never rotates under reduced motion; it stays a static ring. */
+@media (prefers-reduced-motion: reduce) {
+  .ring {
+    animation: none;
+  }
 }

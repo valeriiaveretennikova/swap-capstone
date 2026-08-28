@@ -16,7 +16,7 @@ export const ASSET_LIST: readonly Asset[] = ['BTC', 'ETH', 'USDC', 'SOL', 'XRP',
 export const MOCK_BALANCES: Readonly<Record<Asset, number>> = Object.freeze({
   BTC: 0.0425,
   ETH: 1.25,
-  USDC: 2500,
+  USDC: 92514.30,
   SOL: 12.5,
   XRP: 300,
   TRX: 1500,
@@ -39,8 +39,8 @@ export const QUOTE_LOCK_SECONDS = 10;
 
 /** §8.1 — three consecutive background failures escalate to `rate-error`. */
 export const MAX_CONSECUTIVE_FAILURES = 3;
-/** §8.6 — two consecutive in-modal failures stall the quote lock. */
-export const MAX_MODAL_FAILURES = 2;
+/** §8.6 — two consecutive failures in the confirm view stall the quote lock. */
+export const MAX_CONFIRM_FAILURES = 2;
 
 export const SUBMIT_DELAY_MS = 600;
 export const COPY_FEEDBACK_MS = 2000;

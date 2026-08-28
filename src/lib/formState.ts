@@ -27,7 +27,8 @@ export function deriveFormState({ core, prices, ratesStatus }: FormStateInput): 
 
   if (sendAmount > MOCK_BALANCES[core.sendAsset]) return 'insufficient-funds';
 
-  // The minimum is INCLUSIVE (§6, RD-2): strictly "<", never "<=".
+  // The minimum is INCLUSIVE (§6, RD-2): a strict less-than, never an
+  // or-equal comparison — exactly the minimum is valid.
   if (sendAmount < ASSETS[core.sendAsset].minAmount) return 'below-min';
 
   return 'valid';

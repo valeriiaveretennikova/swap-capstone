@@ -1,27 +1,40 @@
-.card {
+.form {
   display: flex;
+  flex: 1;
   flex-direction: column;
-  gap: var(--space-4);
-  width: 100%;
-  max-width: 480px;
-  padding: var(--space-6);
-  background: var(--bg-primary);
-  border-radius: var(--radius-xl);
 }
 
 .heading {
+  min-height: 36px;
   font: var(--font-h1);
   color: var(--text-primary);
 }
 
-.fields {
+/* §3.0 — 32 below the title; §8.3 — the two cards stay exactly 8 apart and the
+   swap button is absolutely positioned over their seam. */
+.content {
+  position: relative;
   display: flex;
   flex-direction: column;
-  gap: var(--space-1);
+  gap: var(--space-2);
+  margin-top: var(--space-8);
 }
 
+/* §8.1 — rate line above the CTA with a 12 gap; the block sits at the bottom
+   of the card, at least 32 below the content. */
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: auto;
+  padding-top: var(--space-8);
+}
+
+/* [FALLBACK] mobile — the action block follows the content instead of being
+   pinned to the card's bottom, so leftover height cannot open a gap between
+   the content and the actions. The 32 gap comes from `padding-top`. */
 @media (max-width: 767px) {
-  .card {
-    padding: var(--space-4);
+  .actions {
+    margin-top: 0;
   }
 }

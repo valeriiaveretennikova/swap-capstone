@@ -1,4 +1,4 @@
-import { ASSETS, MOCK_BALANCES } from '../constants';
+import { ASSETS, ASSET_LIST, MOCK_BALANCES } from '../constants';
 import { formatPlain, truncate } from './format';
 import {
   isPositiveAmount,
@@ -108,21 +108,40 @@ export function applyMax(core: FormCore, prices: Prices | null): FormCore {
   return withPassive(withActiveRaw(core, 'send', sendRaw), prices);
 }
 
-/** SPEC §8.5 — asset selection. */
+/** RD-4 — the collision fallback: always `BTC`, and `ETH` when `BTC` was picked. */
+function firstAssetOtherThan(picked: Asset): Asset {
+  const fallback = ASSET_LIST.find((asset) => asset !== picked);
+  return fallback ?? picked;
+}
+
+/**
+ * SPEC §8.5 / RD-4 — asset selection. No option is ever disabled: picking the
+ * asset held by the opposite field moves that field to the first asset of
+ * `ASSET_LIST` that differs from the pick, which keeps
+ * `sendAsset !== receiveAsset` true without forbidding any selection.
+ */
 export function applyAssetChange(
   core: FormCore,
   field: ActiveSource,
-  asset: Asset,
+  picked: Asset,
   prices: Prices | null,
 ): FormCore {
   const current = field === 'send' ? core.sendAsset : core.receiveAsset;
-  if (asset === current) return core;
+  // E9a — re-picking the asset already selected in this field is a pure no-op.
+  if (picked === current) return core;
 
-  const withAsset: FormCore =
-    field === 'send' ? { ...core, sendAsset: asset } : { ...core, receiveAsset: asset };
+  const other = field === 'send' ? core.receiveAsset : core.sendAsset;
+  const nextOther = other === picked ? firstAssetOtherThan(picked) : other;
 
-  if (core.activeSource !== field) return withPassive(withAsset, prices);
+  const withAssets: FormCore =
+    field === 'send'
+      ? { ...core, sendAsset: picked, receiveAsset: nextOther }
+      : { ...core, receiveAsset: picked, sendAsset: nextOther };
 
-  const retruncated = truncateRaw(activeRawOf(withAsset), ASSETS[asset].decimals);
-  return withPassive(withActiveRaw(withAsset, field, retruncated), prices);
+  // The active field may be either of the two, so re-truncate whichever it is.
+  const activeAsset =
+    withAssets.activeSource === 'send' ? withAssets.sendAsset : withAssets.receiveAsset;
+  const retruncated = truncateRaw(activeRawOf(withAssets), ASSETS[activeAsset].decimals);
+
+  return withPassive(withActiveRaw(withAssets, withAssets.activeSource, retruncated), prices);
 }

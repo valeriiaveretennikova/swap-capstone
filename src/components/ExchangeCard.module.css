@@ -1,0 +1,61 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  width: var(--card-width);
+  max-width: 100%;
+  min-height: var(--card-min-height);
+  padding: var(--card-padding);
+  background: var(--bg-primary);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-form);
+}
+
+.body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  animation: card-fade-in var(--duration-base) ease;
+}
+
+/* Local keyframes: CSS Modules scope `animation-name`, so a module cannot reach
+   keyframes declared in a global stylesheet. */
+@keyframes card-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* §12 / E19 — the crossfade is decoration, unlike the rate ring's fill, so it
+   is dropped entirely rather than re-armed. */
+@media (prefers-reduced-motion: reduce) {
+  .body {
+    animation: none;
+  }
+}
+
+/* [FALLBACK] — there is no mobile design (§13, OQ-13). Below 768 the card hugs
+   its content instead of holding the desktop 480: the desktop height would
+   leave a gap in the middle of a shorter mobile view. `min-height` is the
+   tallest of the three views so the card's bottom edge does not move between
+   steps, and any leftover height lands below the last button rather than
+   mid-card (the action blocks drop `margin-top: auto` at this breakpoint).
+   Tallest view is `success`: 96 icon + 32 + 36 title + 32 + 92 rows + 32 +
+   48 button + 2x24 padding = 416. */
+@media (max-width: 767px) {
+  .card {
+    width: 100%;
+    min-height: 416px;
+    padding: var(--space-6);
+  }
+}
+
+/* The same sum with this breakpoint's 16px padding: 368 + 32 = 400. */
+@media (max-width: 359px) {
+  .card {
+    min-height: 400px;
+    padding: var(--space-4);
+  }
+}

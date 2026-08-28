@@ -4,7 +4,9 @@ interface SpinnerProps {
   className?: string;
 }
 
-/** SPEC §8.1 — 16px ring, decorative, static under prefers-reduced-motion. */
+/** SPEC §11.8 — the 16px ring inside a loading button. Decorative. */
 export function Spinner({ className }: SpinnerProps) {
-  return <span className={className ? `${styles.spinner} ${className}` : styles.spinner} aria-hidden="true" />;
+  const classes = [styles.ring, className].filter(Boolean).join(' ');
+
+  return <span className={classes} aria-hidden="true" />;
 }
