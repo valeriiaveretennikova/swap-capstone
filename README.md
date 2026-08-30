@@ -35,4 +35,4 @@ All three steps live in one card. It swaps its own contents rather than opening 
 |---|---|
 | `SPEC.md` | specification: screens, states, formulas, edge cases, acceptance criteria |
 | `BRIEF.md` | the original assignment |
-| `HANDOVER.md` | state of the work and technical detail |
+| `docs/ENGINEERING.md` | technical notes: build layout, CSS Modules pitfalls, Chromatic setup |
