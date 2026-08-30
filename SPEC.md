@@ -33,7 +33,7 @@ This is a **page/application**, not a reusable published component. Balances are
 - Confirm view with a 10 s quote-lock countdown and auto rate refresh, stacked `Confirm Exchange` / `Back` buttons.
 - Rate line with an always-present **progress ring** that fills as the time to the next rate refresh runs out, positioned directly above the CTA.
 - Success view with generated Order ID, copy-to-clipboard, timestamp, `Done` reset.
-- **The top header bar** — `CLEAN WALLET` logo, total balance, wallet address, settings glyph. Added at the client's request; **static, non-interactive chrome** with one live value (the computed total balance). See §11.13 and RD-13.
+- **The top header bar** — `CLEAN WALLET` logo, total balance, wallet address, settings glyph. **Static, non-interactive chrome** with one live value (the computed total balance). See §11.13 and RD-13.
 - Full keyboard + screen-reader support, visible focus, responsive down to 320 px.
 - Loading / error / offline handling for the rate feed.
 
@@ -49,9 +49,9 @@ This is a **page/application**, not a reusable published component. Balances are
 - Charts, price history, slippage, gas estimation, min/max on the *receive* side.
 - Storybook, visual-regression tooling, e2e test suite.
 - Animated screen transitions beyond the transitions listed in §12.
-- **Modals, dialogs, overlays, backdrops, bottom sheets** — removed by client decision (RD-6). Nothing in this app renders on top of the page.
+- **Modals, dialogs, overlays, backdrops, bottom sheets** — none of them exist in this app (RD-6). Nothing renders on top of the page.
 - **Any interactivity in the header** — no account menu opens, no settings panel, no address copy, no navigation. The header is in scope as static chrome only; every glyph in it is decorative (§11.13, RD-13).
-- **An avatar, a wallet address and a dropdown chevron in the header** — all removed from the design by the client (RD-18). The header's right side is a wallet glyph, the total balance and a gear glyph, nothing else.
+- **An avatar, a wallet address and a dropdown chevron in the header** — none of them are in the design (RD-18). The header's right side is a wallet glyph, the total balance and a gear glyph, nothing else.
 
 ---
 
@@ -159,7 +159,7 @@ The same card, same size, same position. The form's children unmount and the con
 | `Exchange rate` | `1 USDC ≈ 0.0000092134 BTC` | no icon, row gap `12` |
 | `Service fee` | `0 BTC` | no icon, row gap `12` |
 
-- Summary List block is `380 × 192`, rows are `22` tall each with a `12` gap. **There is no divider line** between the rows in the redesign — the earlier divider requirement is dropped.
+- Summary List block is `380 × 192`, rows are `22` tall each with a `12` gap. **There is no divider line** between the rows.
 - Row labels: `body-md` 15/22 Regular `#6b688c`. Row values: `body-md` 15/22 Medium `#181818`.
 - Only `From` and `To` carry a coin icon (22×22, `radius 999`), placed immediately before the amount.
 
@@ -184,7 +184,7 @@ The same card again. Form and confirm children unmount; their values stay in sta
 
 - Gap: success ring → title `32`; title → summary list `32`; summary list → `Done` `32`.
 - Summary List block is `380 × 124`.
-- There is **no** `{SEND} → {RECEIVE}` summary line on this screen in the redesign — the Figma success frame shows only `Order ID`, `Execution date` and `Fee`. The earlier summary line requirement is dropped.
+- There is **no** `{SEND} → {RECEIVE}` summary line on this screen — the Figma success frame shows only `Order ID`, `Execution date` and `Fee`.
 - Nothing on this screen is disabled. Rate polling is stopped while this view is mounted.
 
 ---
@@ -242,7 +242,7 @@ There is **no `isModalOpen`** flag — the confirm step is a value of `view`, no
 | XRP | Ripple | `0.007` | 4 | `XRPUSDT` | `#262C32` |
 | TRX | Tron | `0.03` | 2 | `TRXUSDT` | `#FF060A` |
 
-Ticker for USD Coin is strictly `USDC` (BRIEF §4). Ticker for Tron is strictly `TRX` (BRIEF §1). Both are confirmed by the client and corrected in Figma — `TRC` no longer exists anywhere and must not appear in code (see §16 → RD-1).
+Ticker for USD Coin is strictly `USDC` (BRIEF §4). Ticker for Tron is strictly `TRX` (BRIEF §1). Both are confirmed by the client and used in Figma — `TRC` exists nowhere and must not appear in code (see §16 → RD-1).
 
 ### 5.2 Mock balances **[FALLBACK — not in BRIEF, not in Figma]**
 
@@ -252,14 +252,14 @@ Constant, never mutated (an exchange does not change them).
 const MOCK_BALANCES: Record<Asset, number> = {
   BTC:  0.0425,
   ETH:  1.25,
-  USDC: 92514.30,   // raised at the client's request — see RD-17
+  USDC: 92514.30,   // see RD-17
   SOL:  12.5,
   XRP:  300,
   TRX:  1500,
 };
 ```
 
-The USDC balance was raised from `2500` to **`92514.30`** at the client's request (RD-17). The other five are unchanged. The header total balance is derived from this map (§11.13), so it follows automatically — no separate figure to update.
+The USDC balance is **`92514.30`** (RD-17). The header total balance is derived from this map (§11.13), so it follows automatically — there is no separate figure to maintain.
 
 Reproducible test cases these values guarantee:
 
@@ -270,7 +270,7 @@ Reproducible test cases these values guarantee:
 | B3 | `USDC → BTC` | type `0.005` | `below-min` (`Min amount is 0.01 USDC`) |
 | B4 | `USDC → BTC` | type exactly `0.01` (= the USDC minimum) | **`valid`** — the minimum is inclusive (§6) |
 | B5 | `USDC → BTC` | type `100` | `valid` |
-| B6 | `USDC → BTC` | type `3000` | **`valid`** — this used to be the insufficient-funds case and is now well inside the balance |
+| B6 | `USDC → BTC` | type `3000` | **`valid`** — well inside the balance |
 | B7 | `USDC → BTC` | click `MAX` | *You send* becomes **`92514.3`** (ungrouped, trailing zero trimmed per §9.1) |
 | B8 | `BTC → USDC` | click `MAX` | *You send* becomes `0.0425` |
 
@@ -302,7 +302,7 @@ Reproducible test cases these values guarantee:
 
 **Boundary — the minimum is INCLUSIVE.** `sendAmount === minAmount[sendAsset]` is **`valid`**: the CTA reads `Continue` and is enabled. Only `sendAmount < minAmount[sendAsset]` is `below-min`. Implementation: the comparison operator in rule 6 is `<` — never `<=`.
 
-Rationale (client decision, see §16 → RD-2): because amounts are truncated to the asset's decimals, a strict `>` comparison would push the real usable minimum one whole decimal step up (USDC `0.01` → `0.02`, TRX `0.03` → `0.04`), which contradicts the published minimums. Inclusive keeps the published number reachable.
+Rationale (see §16 → RD-2): because amounts are truncated to the asset's decimals, a strict `>` comparison would push the real usable minimum one whole decimal step up (USDC `0.01` → `0.02`, TRX `0.03` → `0.04`), which contradicts the published minimums. Inclusive keeps the published number reachable.
 
 Concrete boundaries per asset — the left value is the largest `below-min` amount, the right value is exactly the minimum and is **valid**:
 
@@ -387,7 +387,7 @@ Component: Figma `Button / Style=Primary`, size lg (`height 48`, `padding-x 24`,
 
 - `{MIN}` is printed exactly as in the asset table, no trailing-zero padding, no grouping: `Min amount is 0.00000013 BTC`, `Min amount is 0.01 USDC`, `Min amount is 0.03 TRX`.
 - **The CTA label carries no comparison sign at all.** Because the minimum is inclusive (§6), `Min amount is >0.01 USDC` would be misinformation — `0.01` is accepted. The bare form `Min amount is 0.01 USDC` is already unambiguous, so no sign is added.
-- **The character `>` must not appear anywhere in the UI copy** — not on the button, not in the helper text, not in a placeholder, not in the confirm view or the success view. The input placeholders use `≥` (U+2265) per the current Figma design; see §9.2 for the six exact strings. Any `>` found in a rendered string is a defect. The earlier instruction to preserve `>` in the placeholders is **cancelled** — it predates both the inclusive-minimum decision and the design fix.
+- **The character `>` must not appear anywhere in the UI copy** — not on the button, not in the helper text, not in a placeholder, not in the confirm view or the success view. The input placeholders use `≥` (U+2265) per the current Figma design; see §9.2 for the six exact strings. Any `>` found in a rendered string is a defect.
 - The label uses the **send** asset, always.
 - Enabled interactions: hover `#276fd3`, active/pressed `#215eb3`, `transition: background-color 150ms ease`.
 - `focus-visible`: `box-shadow: 0 0 0 2px #ffffff, 0 0 0 6px #2b7bea` (Figma `focus/ring`: 4px ring + 2px gap), `outline: none`.
@@ -415,7 +415,7 @@ Component: Figma `Button / Style=Primary`, size lg (`height 48`, `padding-x 24`,
 
 #### Rate ring — a PROGRESS indicator (Figma `133:1415`)
 
-The ring is **not** a plain busy spinner. It **fills up as the time until the next rate refresh runs out**, so the user can see how fresh the displayed rate is and when it will change. A ring that only span during the request was the reported defect.
+The ring is **not** a plain busy spinner. It **fills up as the time until the next rate refresh runs out**, so the user can see how fresh the displayed rate is and when it will change. A ring that only spins during the request is a defect.
 
 **Geometry (unchanged, from §11):** `16 × 16`, thickness `2`, track `#e0e0ec` (Figma `--rate-timer-ring-track`), progress `#2b7bea` (Figma `--rate-timer-ring-progress`), gap `8` after the rate text, positioned above the `Continue` button. Always rendered, in every rate state.
 
@@ -508,7 +508,7 @@ On click:
 1. `activeSource = 'send'`.
 2. `sendRaw = format(MOCK_BALANCES[sendAsset], dec[sendAsset])` — fixed notation, trailing zeros trimmed, **no grouping** (`92514.3`, `0.0425`).
 3. Recalculate `receiveRaw` immediately.
-4. Because `sendAmount === balance`, rule 5 of §6 no longer matches ⇒ an active `insufficient-funds` error and its red border and banner **disappear in the same render**. CTA validity is re-evaluated (it becomes `valid` unless the balance is strictly below the asset minimum, in which case `below-min` — the minimum itself is valid, §6).
+4. Because `sendAmount === balance`, rule 5 of §6 does not match ⇒ an active `insufficient-funds` error and its red border and banner **disappear in the same render**. CTA validity is re-evaluated (it becomes `valid` unless the balance is strictly below the asset minimum, in which case `below-min` — the minimum itself is valid, §6).
 
 Disabled when `MOCK_BALANCES[sendAsset] === 0` or form state is `rate-error`.
 
@@ -554,7 +554,7 @@ The rule is **symmetric**: a change in `You receive` shifts `You send` in exactl
 
 #### Invariant
 
-`sendAsset !== receiveAsset` always holds — an identical pair such as `BTC → BTC` is unreachable. **The mechanism has changed: the invariant is now maintained by the auto-move, not by forbidding the selection.** This is the main behavioural difference from BRIEF §4 and the single most important thing to get right in this section.
+`sendAsset !== receiveAsset` always holds — an identical pair such as `BTC → BTC` is unreachable. **The invariant is maintained by the auto-move, not by forbidding the selection.** This is the main behavioural difference from BRIEF §4 and the single most important thing to get right in this section.
 
 - Closes on: selection, re-pick of the same asset, `Esc`, `Tab`, outside click, scroll of the page.
 
@@ -580,7 +580,7 @@ Countdown:
 - **all typed values, assets and `activeSource` are preserved** — the user is returned to Screen 2 exactly as they left it;
 - focus returns to the form's `Continue` button;
 - must be reachable and activatable by keyboard (`Tab` to it, `Enter` / `Space`);
-- `Esc` is **no longer required** — there is no dialog to dismiss. Implementing `Esc` as a shortcut for `Back` is allowed but optional, and its absence is not a defect.
+- `Esc` is **not required** — there is no dialog to dismiss. Implementing `Esc` as a shortcut for `Back` is allowed but optional, and its absence is not a defect.
 - There is no backdrop, so there is no backdrop-click behaviour to implement.
 
 `Confirm Exchange` (primary button, rendered **above** `Back`):
@@ -657,8 +657,8 @@ Each field shows the placeholder of **its own** asset. Exact expected strings, b
 - No space between `≥` and the number. No grouping separators. No trailing-zero padding — the number is copied verbatim from the `minAmount` column of §5.1.
 - The placeholder updates immediately when that field's asset changes.
 - **Why `≥` and not `>`:** the minimum is inclusive (§6) — `0.01` USDC *is* accepted. A `>` placeholder would state a rule the app does not enforce, and would be exactly as untrue as `Min amount is >0.01 USDC` would be on the button. `≥` is the only technically correct sign.
-- **Source of truth:** `≥` **matches the current Figma design** — the client corrected the sign in the design file. This is not a deviation from the design and not a fallback value. The only thing it departs from is the literal string `>{MIN_AMOUNT}` in **BRIEF §3, which is now stale**: the brief lags behind the updated design, not the other way round. Where the brief and the current Figma design disagree on this sign, the design wins (see §16 → RD-2).
-- Placeholder, helper text, CTA label and the `<` comparison in code are now mutually consistent.
+- **Source of truth:** `≥` **matches the current Figma design**. This is not a deviation from the design and not a fallback value. The only source it departs from is the literal string `>{MIN_AMOUNT}` in **BRIEF §3**. Where the brief and the current Figma design disagree on this sign, the design wins (see §16 → RD-2).
+- Placeholder, helper text, CTA label and the `<` comparison in code are mutually consistent.
 - Screen readers announce `≥` as "greater than or equal to", which is the intended reading; no `aria-label` override or visually-hidden duplicate is needed on the input for the sign.
 
 ---
@@ -747,7 +747,7 @@ Values marked **(Figma)** were read from the file `Bw2TEVGyo2298cbcRUQKlc`. Valu
 
 Figma also defines `input-field/border/error = #f20f0f`. **The BRIEF values win** (`#FF4D4D` / `#FFF0F0` / `#D32F2F`) because they are an explicit client requirement. See OQ-5.
 
-The success colour is now a **real Figma token** — `icon/success = #22c55e`, read from frame `133:1496`. The earlier `#12B76A` fallback is retired and **OQ-8 is closed** (§16.1 → RD-8).
+The success colour is a **real Figma token** — `icon/success = #22c55e`, read from frame `133:1496`. `#12B76A` must not appear anywhere; **OQ-8 is closed** (§16.1 → RD-8).
 
 ### 11.3 Typography (Figma)
 
@@ -767,8 +767,8 @@ Stack: `'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif`.
 | `caption-sm` | 12 / 16 | 400 | field label, helper text, banner text |
 | `button-lg` | 16 / 24 | 500 Medium | all button labels |
 
-- `h1` **28 / 36 SemiBold** is now confirmed from Figma (`133:1403`, `133:1496`) — the earlier `[FALLBACK]` tag is removed.
-- **There is no `h2`.** All three views use a single `h1`-sized title in the same Title Row slot, so the previous `h2 20/30 [FALLBACK]` row is deleted. Semantically each view still renders exactly one heading element (§14).
+- `h1` **28 / 36 SemiBold** is confirmed from Figma (`133:1403`, `133:1496`); it carries no `[FALLBACK]` tag.
+- **There is no `h2`.** All three views use a single `h1`-sized title in the same Title Row slot, and each view renders exactly one heading element (§14).
 - Letter-spacing: `0` everywhere (Figma `typography/letterspacing/default`).
 
 ### 11.4 Spacing scale (Figma)
@@ -846,7 +846,7 @@ The `<input>` itself must render **no** focus affordance of its own:
 
 - No `outline`, no `border`, no `box-shadow`, no background change on the input in any state.
 - The blue `2px` indication appears exactly once, on the card, via `:focus-within` (or an equivalent focus-tracking state).
-- The reported defect was a **double ring** — one on the card and one inside the input. Exactly one indicator is allowed.
+- A **double ring** — one on the card and one inside the input — is a defect. Exactly one indicator is allowed.
 - Use `border-width: 2px` on focus with a compensating layout so the card does not shift by 1px when the border thickens (e.g. keep a `2px` transparent border at rest, or use `box-shadow: inset 0 0 0 2px` for the focus state).
 
 #### CurrencySelector — no border, no fill (Figma `133:1409` → `104:783`)
@@ -865,8 +865,8 @@ The trigger has **no border and no background of its own**. In Figma it is a bar
 | Background | **none** (transparent) |
 | Radius | `8` — applies only to the hover background and the focus ring |
 
-- The `1px solid #cccade` border previously added to the trigger is **removed**. It is not in the design.
-- The control does not disappear against the card, because the **white `#ffffff` logo box** provides the contrast — that is the design's affordance, together with the chevron. This is why no compromise border is needed.
+- The trigger carries **no** `1px solid #cccade` border. No border is in the design.
+- The control does not disappear against the card, because the **white `#ffffff` logo box** provides the contrast — that is the design's affordance, together with the chevron. No additional border is needed.
 - Hover: `background #f7f6fa` is a no-op on the card; use the Figma `tc/bg/hover` value `#f7f6fa` as specified and accept that the visible hover cue is the cursor plus the chevron. If a stronger hover cue is wanted, that is a design change and must be requested — do not invent one.
 - Focus-visible: the ring from §11.6 on the trigger, `border-radius: 8`.
 
@@ -916,7 +916,7 @@ Figma `background` (`75:460`, 1440×1024): flat `#f7f6fa` with two large soft ra
 
 ### 11.10 Cryptocurrency icons (Figma `136:2275`)
 
-The six coin icons are **real brand marks in the design file**, not letter monograms. The current monogram placeholders (a coloured circle with a letter) are a defect and must be replaced.
+The six coin icons are **real brand marks in the design file**, not letter monograms. A monogram placeholder (a coloured circle with a letter) is a defect.
 
 Figma nodes — each is a vector symbol with a native size of `40 × 40`:
 
@@ -939,11 +939,11 @@ Required render sizes:
 | Dropdown list item | `24 × 24` (Figma `dd-item/icon-size`) |
 | `From` / `To` rows in the confirm view | `22 × 22` (Figma `133:1484`, `133:1489`) |
 
-**What I could not extract:** the SVG path data itself. The metadata tools return node geometry and names, not vector bytes. The builder must export the six nodes above — via the Figma MCP `get_design_context` on each node id (it returns asset download URLs) or via Figma's own SVG export — and commit the results. The node ids, native size, per-asset brand colours and the three required render sizes are all captured above, so nothing else is needed from a human.
+**Asset requirement:** the SVG path data is not carried by this SPEC — the metadata tools return node geometry and names, not vector bytes. The builder exports the six nodes above — via the Figma MCP `get_design_context` on each node id (it returns asset download URLs) or via Figma's own SVG export — and commits the results. The node ids, native size, per-asset brand colours and the three required render sizes are all specified above, so nothing else is needed from a human.
 
 ### 11.11 Success ring (Figma `133:1500`)
 
-The success indicator is an **outlined green ring with a check inside** — **not** a filled disc. The current filled circle is a defect.
+The success indicator is an **outlined green ring with a check inside** — **not** a filled disc. A filled circle is a defect.
 
 | Property | Value | Source |
 | --- | --- | --- |
@@ -960,7 +960,7 @@ The success indicator is an **outlined green ring with a check inside** — **no
 - The SVG paths use `fill="currentColor"`, and the wrapper sets `color: var(--success)`. Changing the token recolours both the ring and the check.
 - `aria-hidden="true"` — decorative (§14).
 
-The earlier CSS approach (`border: 3px solid #22c55e` plus a separate stroked check) is **superseded**. The `3px` figure in it was eyeballed off a render; the real thickness is `4px` and comes from the design. **OQ-14 is closed** (RD-14).
+A CSS approach (`border: 3px solid #22c55e` plus a separate stroked check) does **not** satisfy this requirement, and the thickness is not `3px`: it is `4px`, read from the design. **OQ-14 is closed** (RD-14).
 
 ### 11.11a Summary rows (confirm and success views)
 
@@ -977,7 +977,7 @@ The earlier CSS approach (`border: 3px solid #22c55e` plus a separate stroked ch
 
 ### 11.12 Illustrative values in the mock — do NOT copy
 
-The client stated explicitly that the figures in the mock are placeholder content and that all numbers and calculation logic are already approved. The following appear in the Figma frames and **must be ignored** — the SPEC values win:
+The figures in the mock are placeholder content; all numbers and calculation logic are approved and come from this SPEC and `BRIEF.md`. The following appear in the Figma frames and **must be ignored** — the SPEC values win:
 
 | Mock shows | Do NOT change | Authoritative source |
 | --- | --- | --- |
@@ -989,15 +989,15 @@ The client stated explicitly that the figures in the mock are placeholder conten
 | `≈` vs `=` | The separator is `≈`, never `=` | BRIEF §2 |
 | `$346,788.072` in the header | The header balance is **computed** from `MOCK_BALANCES` × live prices; this figure is never hard-coded | §11.13 |
 | `$346,788.72` in the header (newer screenshot) | Same — the client said outright «сумма не соответствует, это пример» | §11.13 |
-| `0x...E0EEd` as the header text node name | The Figma node keeps this name from an older revision. The slot now holds the **balance**, not a wallet address. Node names do not track content — do not render an address | §11.13 |
+| `0x...E0EEd` as the header text node name | Node names do not track content. The slot holds the **balance**, not a wallet address — do not render an address | §11.13 |
 
-A reviewer must not raise these as mismatches, and a builder must not "correct" the app to match them.
+None of these is a mismatch, and the app must not be "corrected" to match them.
 
 ### 11.13 Header (Figma `133:1419`)
 
 Static chrome at the top of the page, above the exchange card. Present on all three views and identical in each.
 
-The right-hand side was **redesigned by the client** (RD-18). It is now three elements only. The avatar, the wallet address, the circular background behind the wallet glyph and the dropdown chevron are all **gone** — they are `hidden` in the Figma node and must not be built.
+The right-hand side holds **three elements only** (RD-18). An avatar, a wallet address, a circular background behind the wallet glyph and a dropdown chevron are `hidden` in the Figma node and must not be built.
 
 #### Geometry
 
@@ -1009,7 +1009,7 @@ The right-hand side was **redesigned by the client** (RD-18). It is now three el
 | Background | `#ffffff` | Figma |
 | Text | Poppins **Medium 14**, line-height `21`, `#181818` | Figma `Body/Body2*Medium`, `Main Colors/Secondary` |
 
-Logo block — **unchanged**, `198 × 32` at `x: 132, y: 16`:
+Logo block — `198 × 32` at `x: 132, y: 16`:
 
 | Part | Value |
 | --- | --- |
@@ -1017,7 +1017,7 @@ Logo block — **unchanged**, `198 × 32` at `x: 132, y: 16`:
 | Gap | `8` |
 | Wordmark `CLEAN WALLET` | `158.4 × 12.95` |
 
-Menu block — **`172 × 32` at `x: 1136`** (previously `327 × 32` at `x: 981`). Exactly three elements, flush right:
+Menu block — **`172 × 32` at `x: 1136`**. Exactly three elements, flush right:
 
 | # | Element | Geometry |
 | --- | --- | --- |
@@ -1027,16 +1027,16 @@ Menu block — **`172 × 32` at `x: 1136`** (previously `327 × 32` at `x: 981`)
 
 Arithmetic check: `124 (wallet block) + 24 (gap) + 24 (gear) = 172` ✓.
 
-**Removed from the design and therefore from the build:**
+**Hidden in the design and therefore absent from the build:**
 
-| Was | Figma node | Status |
+| Element | Figma node | Status |
 | --- | --- | --- |
-| `Balance` block with an avatar | `31:2519` | `hidden` — **the avatar no longer exists at all** |
+| `Balance` block with an avatar | `31:2519` | `hidden` — **there is no avatar anywhere** |
 | Secondary `Avator` inside the wallet block | `31:2512` | `hidden` |
-| `Ellipse 341` — circular background under the wallet glyph | `35:2944` | `hidden` — glyph now sits on the white header with no disc |
+| `Ellipse 341` — circular background under the wallet glyph | `35:2944` | `hidden` — the glyph sits on the white header with no disc |
 | `Arrows/drop` — dropdown chevron | `32:2685` | `hidden` — **no dropdown affordance** |
 
-The text slot's Figma node is still **named** `0x...E0EEd` because layer names do not follow content. It now holds the **computed total balance**, not a wallet address. There is no wallet address anywhere in the header (§11.12).
+The text slot's Figma node is **named** `0x...E0EEd` because layer names do not follow content. It holds the **computed total balance**, not a wallet address. There is no wallet address anywhere in the header (§11.12).
 
 The logo mark uses the Figma `Gradient` / `Additional Colors/Gradient` tokens. Those are gradient fills, so the MCP variable API returns an empty value for them — the exact stops are **not extractable** and are implemented from the rendered design. See OQ-15.
 
@@ -1051,11 +1051,11 @@ headerBalanceUsd = Σ over all 6 assets of ( MOCK_BALANCES[asset] × prices[asse
 - While `prices === null` (first load pending, or `rate-error`) the header shows an **em dash `—`**. It never shows `$0`, `$0.00`, `NaN` or a spinner — a zero balance would be a factual lie.
 - It updates on every successful poll, like any other price-derived value.
 - With the §5.2 balances the figure lands in the high hundreds of thousands of dollars, but **no specific total is expected or asserted anywhere** — it moves with the live Binance prices. Neither the SPEC nor any test fixes an exact amount.
-- Both figures shown in the design, `$346,788.072` and `$346,788.72`, are illustrative (§11.12). The client said outright «сумма не соответствует, это пример». Neither may appear as a literal.
+- Both figures shown in the design, `$346,788.072` and `$346,788.72`, are illustrative (§11.12) — «сумма не соответствует, это пример». Neither may appear as a literal.
 
 #### No wallet address in the header
 
-There is **no `HEADER_WALLET_LABEL` constant and no wallet address string.** The slot that used to hold `0x...E0EEd` now holds the computed balance (RD-18). Since nothing static is copied from the design any more, the do-not-copy rule (criterion 131) applies to the header without exception — the earlier carve-out for that constant is removed along with the constant itself.
+There is **no `HEADER_WALLET_LABEL` constant and no wallet address string.** The slot named `0x...E0EEd` in the design holds the computed balance (RD-18). Nothing static is copied from the design, so the do-not-copy rule (criterion 131) applies to the header without exception.
 
 There are no wallets, addresses or accounts in this app (§2), so nothing in the header refers to one.
 
@@ -1102,25 +1102,25 @@ Figma has **no mobile header frame**, so everything below is an engineering choi
 | `< 768px` **[FALLBACK]** | `padding-inline` drops to `16`. The **wallet glyph and the balance are hidden**; only the logo and the gear glyph remain. |
 | `< 360px` **[FALLBACK]** | `padding-inline` drops to `12`. Logo and gear only. |
 
-**Updated arithmetic after the header redesign (RD-18).** The menu shrank from `327` to `172`, so the intrinsic width is now:
+**Header arithmetic (RD-18).** With a `172`-wide menu the intrinsic width is:
 
 ```
 132 (pad) + 198 (logo) + 24 (min gap) + 172 (menu) + 132 (pad) = 658
 ```
 
-`658 < 768`, so the full desktop header **does fit** at 768 px and no longer forces a horizontal scrollbar there. The earlier overflow (`813 > 768`) is resolved by the redesign itself.
+`658 < 768`, so the full desktop header **fits** at 768 px and does not force a horizontal scrollbar there.
 
-This does **not** relax anything:
-- Criterion 116 — no horizontal scroll at **any** width from `320` to `1440` — remains in force. `658` still exceeds `320`–`657`, so the padding reduction and the menu collapse are still required at the low end.
-- The **proportional padding** the builder implemented **stays**. It is what keeps the range between `658` and `768` clean and gives margin if the menu ever grows again. Do not revert it.
+Nothing about the scroll requirement is relaxed by this:
+- Criterion 116 — no horizontal scroll at **any** width from `320` to `1440` — is in force. `658` still exceeds `320`–`657`, so the padding reduction and the menu collapse are required at the low end.
+- **Proportional padding is required.** It is what keeps the range between `658` and `768` clean and gives margin if the menu ever grows.
 
 Hiding the balance on small screens is acceptable because it is decorative chrome — no unique information is lost, and the exchange itself never depends on it.
 
 #### Hard requirements
 
 - **No horizontal scrollbar at any viewport width from `320px` to `1440px`** — not just at the two tested endpoints. `document.scrollingElement.scrollWidth` never exceeds `clientWidth`. Verify by sweeping widths, e.g. every 8 px across the range.
-  - The header is the known trap: its `padding-inline: 132` plus its intrinsic content is what previously overflowed at `768px`. After the header redesign (RD-18) the intrinsic width is `658`, so `768` is safe — but every width below `658` still needs the padding reduction and the menu collapse to have already engaged. They must kick in **before** the content stops fitting, not exactly on a breakpoint.
-  - This criterion is a **range check by design**: the original `320px`-only check passed while `768px` was broken, which is exactly the failure it now prevents.
+  - The header is the known trap: its `padding-inline: 132` plus its intrinsic content is what can overflow. With the header of §11.13 (RD-18) the intrinsic width is `658`, so `768` is safe — but every width below `658` needs the padding reduction and the menu collapse to have already engaged. They must kick in **before** the content stops fitting, not exactly on a breakpoint.
+  - This criterion is a **range check by design**: a `320px`-only check can pass while `768px` is broken, which is exactly the failure the range prevents.
 - All interactive targets ≥ **40×40 px** (the MAX chip gets an invisible padded hit area to reach 40px height).
 
 ---
@@ -1160,7 +1160,7 @@ Hiding the balance on small screens is acceptable because it is decorative chrom
 - Selecting the already-selected option is a no-op that just closes the list and restores focus to the trigger — no announcement is fired, because nothing changed.
 - When a collision auto-moves the opposite field (§8.5), that field's trigger changes its accessible name (the ticker). The change is conveyed by the trigger's own name on next focus; **no live region announces it** — a `role="status"` here would fire on every asset change and add noise. The visible check mark and the two triggers remain the source of truth.
 
-### View transitions (replaces the former "Modal" rules)
+### View transitions (no dialog semantics)
 
 The confirm step is a view swap, so **none of the dialog machinery applies**. The following must **not** exist anywhere in the app:
 
@@ -1204,7 +1204,7 @@ What is required instead, on every `view` change:
 
 ### 14.1 Accepted contrast waiver (client-approved — NOT a defect)
 
-The client has reviewed and **knowingly accepted** two WCAG 2.1 AA 1.4.3 (Contrast Minimum) failures. The accent colour `#2b7bea` stays exactly as it is. Neither colour, font size nor font weight may be changed to "fix" these.
+Two WCAG 2.1 AA 1.4.3 (Contrast Minimum) failures are **knowingly accepted by the client**. The accent colour `#2b7bea` stays exactly as it is. Neither colour, font size nor font weight may be changed to "fix" these.
 
 | Element | Foreground / background | Measured | AA requirement | Status |
 | --- | --- | --- | --- | --- |
@@ -1212,9 +1212,9 @@ The client has reviewed and **knowingly accepted** two WCAG 2.1 AA 1.4.3 (Contra
 | `MAX` chip label (Poppins SemiBold **12px**) | `#2b7bea` on `#f7f6fa` | **3.8:1** | 4.5:1 | **Waived by client** |
 
 Consequences for implementation and review:
-- Do **not** darken the accent (a `#1c62c4`-style change was rejected), do not enlarge the CTA label, do not add a text shadow or an outline as a workaround.
-- A reviewer must **not** mark the build FAIL because of these two specific measurements. They are the only accepted contrast exceptions.
-- **Every other accessibility requirement in §14 remains mandatory in full** — semantics, one `<h1>` per view, labels, `inputMode`, `role="alert"`, `aria-describedby`, `aria-invalid`, the deliberate focus move on every view change, the `role="status"` announcement, keyboard-only completability, and the visible `:focus-visible` ring. Any other contrast pair not listed in the waiver table above must still meet AA (4.5:1 for normal text, 3:1 for UI-component boundaries and the focus ring). Note that focus-trap and `Esc` are **not** on this list — they were dialog requirements and no longer apply (RD-6).
+- Do **not** darken the accent — a darker variant such as `#1c62c4` is not permitted — do not enlarge the CTA label, and do not add a text shadow or an outline.
+- These two specific measurements are the **only** accepted contrast exceptions, and neither of them is a build failure.
+- **Every other accessibility requirement in §14 remains mandatory in full** — semantics, one `<h1>` per view, labels, `inputMode`, `role="alert"`, `aria-describedby`, `aria-invalid`, the deliberate focus move on every view change, the `role="status"` announcement, keyboard-only completability, and the visible `:focus-visible` ring. Any other contrast pair not listed in the waiver table above must still meet AA (4.5:1 for normal text, 3:1 for UI-component boundaries and the focus ring). Focus-trap and `Esc` are **not** on this list — they are dialog requirements and do not apply here (RD-6).
 - The waiver does not weaken §6.1: information carried by a disabled control is still duplicated as helper text, and placeholders still carry no unique information.
 
 ---
@@ -1262,13 +1262,13 @@ A reviewer marks PASS only if every line below is true.
 28. The error banner uses `#FFF0F0` background, `#D32F2F` text, an info-circle icon and the verbatim string `There are insufficient funds in your account. Please top up your balance.`
 29. The banner is rendered **below the You receive container**.
 30. `below-min` CTA label is exactly `Min amount is {MIN} {ASSET}` with **no comparison sign** — e.g. `Min amount is 0.01 USDC` for USDC and `Min amount is 0.00000013 BTC` for BTC.
-31. Input placeholders use `≥` (U+2265, a single character — not `>=`, not `&ge;`, not `>`), no space before the number, as in the current Figma design. All six strings match **exactly**, character for character: BTC `≥0.00000013`, ETH `≥0.000004`, USDC `≥0.01`, SOL `≥0.000094`, XRP `≥0.007`, TRX `≥0.03`. (BRIEF §3 still shows `>{MIN_AMOUNT}` — that string is stale and must not be followed.)
+31. Input placeholders use `≥` (U+2265, a single character — not `>=`, not `&ge;`, not `>`), no space before the number, as in the current Figma design. All six strings match **exactly**, character for character: BTC `≥0.00000013`, ETH `≥0.000004`, USDC `≥0.01`, SOL `≥0.000094`, XRP `≥0.007`, TRX `≥0.03`. (BRIEF §3 shows `>{MIN_AMOUNT}`; that string must not be followed.)
 32. The character `>` appears **nowhere** in rendered UI copy — not in a placeholder, the CTA, the helper text, the banner, the confirm view or the success view. (`grep -n '>' ` over the JSX string literals returns no comparison sign in user-facing text.)
 33. `below-min` also renders helper text under the send card in `#6b688c`.
 34. `insufficient-funds` takes precedence over `below-min` when both conditions hold.
 35. The minimum is **inclusive**: the below-min condition is `sendAmount < minAmount[sendAsset]`. The operator is `<`; there is **no `<=`** in the minimum check anywhere in the code.
 36. **Boundary (off-by-one check):** entering exactly the minimum yields state **`valid`** — CTA is `Continue`, **enabled**, with no helper text, no banner and no red border. Verified on assets where both sides of the boundary are representable: BTC (`0.00000012` ⇒ `below-min`, `0.00000013` ⇒ `valid`), TRX (`0.02` ⇒ `below-min`, `0.03` ⇒ `valid`), XRP (`0.0069` ⇒ `below-min`, `0.007` ⇒ `valid`). For USDC only the valid side is checked (`0.01` ⇒ `valid`) — see criterion 37.
-37. **`below-min` is unreachable for USDC and that is correct.** With `decimals: 2` and `minAmount: 0.01`, no positive value below the minimum can be typed (`0.009` sanitises to `0.00` ⇒ `typing`, per §9 rule 6 and §6 rule 3). A reviewer must **not** require a `0.009 ⇒ below-min` USDC case and must **not** treat the unreachable state as a defect. No epsilon, hidden decimal or special-cased comparison may be added to force it. TRX, despite also having `decimals: 2`, **is** reachable (`0.01` and `0.02`), so the shared code path is still exercised. See §6.2.
+37. **`below-min` is unreachable for USDC and that is correct.** With `decimals: 2` and `minAmount: 0.01`, no positive value below the minimum can be typed (`0.009` sanitises to `0.00` ⇒ `typing`, per §9 rule 6 and §6 rule 3). A `0.009 ⇒ below-min` USDC case is **not** required, and the unreachable state is **not** a defect. No epsilon, hidden decimal or special-cased comparison may be added to force it. TRX, despite also having `decimals: 2`, **is** reachable (`0.01` and `0.02`), so the shared code path is still exercised. See §6.2.
 38. The placeholder sign `≥`, the CTA label without a sign, the helper text without a sign and the `<` operator in code all agree with each other — no combination states a rule the app does not enforce.
 39. **Border precedence:** a send card that is focused *and* in `insufficient-funds` shows the red `2px #FF4D4D` border only — no blue border and no blue ring. Red beats blue (§6.1).
 
@@ -1340,8 +1340,8 @@ A reviewer marks PASS only if every line below is true.
 90. The integer part is capped at 12 digits.
 
 **Balances**
-91. `MOCK_BALANCES` matches §5.2 exactly, including **`USDC: 92514.30`**. The old `2500` appears nowhere.
-92. All eight §5.2 test cases (B1–B8) reproduce as specified. In particular **`3000` USDC is now `valid`, not `insufficient-funds`**, and the durable insufficient-funds case is **B2** (`BTC → USDC`, type `0.05`, balance `0.0425`).
+91. `MOCK_BALANCES` matches §5.2 exactly, including **`USDC: 92514.30`**. The value `2500` appears nowhere.
+92. All eight §5.2 test cases (B1–B8) reproduce as specified. In particular **`3000` USDC is `valid`, not `insufficient-funds`**, and the durable insufficient-funds case is **B2** (`BTC → USDC`, type `0.05`, balance `0.0425`).
 
 **Edge cases**
 93. Every case E1–E19 and E21–E30 of §10, plus E9a and E9b, is implemented and reproducible (E20 / RTL is explicitly out of scope and is not checked).
@@ -1356,12 +1356,12 @@ A reviewer marks PASS only if every line below is true.
 100. **Each view renders exactly one `<h1>`** and there is no `<h2>`; only one view is mounted at a time.
 101. **On every view change, focus moves deliberately**: `form → confirm` → the `Confirm Exchange` heading; `confirm → success` → the `Exchange Successful` heading; `Back` → the `Continue` button; `Done` → the *You send* input. Focus is never left on an unmounted element and never falls back to `<body>`.
 102. **Every view change is announced** through the single shared visually-hidden `role="status"` element.
-103. **No dialog machinery exists**: no `role="dialog"`, no `aria-modal`, no focus trap, no `inert`, no `aria-hidden` on the page background, no body scroll lock, no portal. A reviewer must verify these are *absent* — their presence is the defect.
+103. **No dialog machinery exists**: no `role="dialog"`, no `aria-modal`, no focus trap, no `inert`, no `aria-hidden` on the page background, no body scroll lock, no portal. All of these are verifiably *absent*; the presence of any of them is a defect.
 104. The whole flow — pick asset, type, swap, MAX, continue, confirm, copy, done, and `Back` — is completable with the keyboard only, with no trapped focus.
 105. A visible focus ring (`0 0 0 2px #fff, 0 0 0 6px #2b7bea`) appears on every interactive element via `:focus-visible`.
 106. The amount `<input>` renders **no focus affordance of its own** — no `outline`, no `border`, no `box-shadow` in any state. The blue `2px` focus indication appears exactly once, on the card. No double ring.
 107. The below-min minimum is never communicated only by the disabled CTA.
-108. **Contrast waiver (§14.1):** the CTA label (`#ffffff` on `#2b7bea`, 4.1:1) and the `MAX` chip label (`#2b7bea` on `#f7f6fa`, 3.8:1) are client-accepted AA exceptions — a reviewer must **not** FAIL the build on these two, and the accent must still be exactly `#2b7bea`. The decorative success ring (`#22c55e` on white, 2.3:1) is likewise exempt. Every *other* contrast pair meets AA (4.5:1 normal text, 3:1 UI boundaries / focus ring), and every other §14 requirement is checked in full.
+108. **Contrast waiver (§14.1):** the CTA label (`#ffffff` on `#2b7bea`, 4.1:1) and the `MAX` chip label (`#2b7bea` on `#f7f6fa`, 3.8:1) are client-accepted AA exceptions — neither is a build failure, and the accent is exactly `#2b7bea`. The decorative success ring (`#22c55e` on white, 2.3:1) is likewise exempt. Every *other* contrast pair meets AA (4.5:1 normal text, 3:1 UI boundaries / focus ring), and every other §14 requirement is checked in full.
 
 **Icons**
 109. All six coin icons are the **real brand marks** exported from Figma `136:2275` as inline SVG React components. **No letter monograms**, no coloured circle with a character in it.
@@ -1385,7 +1385,7 @@ A reviewer marks PASS only if every line below is true.
 121. Below `768px` the wallet glyph and the balance are hidden and only the logo and gear remain, with `padding-inline` reduced to `16`; below `360px` `padding-inline` is `12`.
 
 **Responsive & design**
-122. **No horizontal scrollbar at any viewport width in the range `320px` – `1440px`**, verified by sweeping the range (e.g. every 8 px) rather than only checking the endpoints. `document.scrollingElement.scrollWidth` never exceeds `clientWidth`. This is a **range** check by design: the earlier `320px`-only check passed while `768px` was broken. After the header redesign the intrinsic header width is `132 + 198 + 24 + 172 + 132 = 658`, so `768` now fits — but every width below `658` still requires the padding reduction and menu collapse to have already engaged. The builder's proportional padding **stays**; do not revert it.
+122. **No horizontal scrollbar at any viewport width in the range `320px` – `1440px`**, verified by sweeping the range (e.g. every 8 px) rather than only checking the endpoints. `document.scrollingElement.scrollWidth` never exceeds `clientWidth`. This is a **range** check by design: a `320px`-only check can pass while `768px` is broken. The intrinsic header width is `132 + 198 + 24 + 172 + 132 = 658`, so `768` fits — but every width below `658` requires the padding reduction and menu collapse to have already engaged. Proportional padding is **required**.
 123. At `≥ 768px` the card is `460` wide with `padding 40`, `radius 24`, `background #ffffff` and the `shadow/form` stack; the content column is `380`.
 124. Below 768 px the card goes full width with `16px` page padding and `padding 24`; **no bottom sheet and no overlay is introduced** — the three views still swap inside the card.
 125. The confirm buttons remain stacked with a `12` gap at every viewport width.
@@ -1394,129 +1394,128 @@ A reviewer marks PASS only if every line below is true.
 128. Colours, radii, spacing, font sizes and weights match §11; no hard-coded value outside the token set. All three titles are `h1` **28 / 36 SemiBold**.
 129. Poppins is loaded and applied; a system-font fallback is declared, and the fallback also renders `≥` (U+2265) correctly.
 130. All motion listed in §12 is disabled under `prefers-reduced-motion: reduce`, including the view cross-fade and the rate ring's indeterminate rotation — **with the single documented exception of the ring's determinate fill**, which is kept (criterion 18).
-131. None of the illustrative mock values from §11.12 are hard-coded in the app: no `92,845.34`, no `82,150`, no `123456789`, no `26.08.2026`, no `$346,788.072`, no `$346,788.72`, no `0x...E0EEd`, and the rate line is not inverted to `1 BTC ≈ … USDC` for a `USDC → BTC` pair. There are **no exemptions** to this criterion — the earlier carve-out existed only for the wallet-address constant, which no longer exists.
+131. None of the illustrative mock values from §11.12 are hard-coded in the app: no `92,845.34`, no `82,150`, no `123456789`, no `26.08.2026`, no `$346,788.072`, no `$346,788.72`, no `0x...E0EEd`, and the rate line is not inverted to `1 BTC ≈ … USDC` for a `USDC → BTC` pair. There are **no exemptions** to this criterion.
 
 ---
 
 ## 16. Decisions & open questions
 
-### 16.1 Resolved decisions (client-approved — treat as requirements, do not re-litigate)
+### 16.1 Resolved decisions (client-approved requirements)
 
-**RD-1 — Tron ticker: `TRX`.** Confirmed by the client. The Figma design has been corrected; `TRC` no longer exists in the design file and must not appear in code, copy, tests or fixtures. USD Coin remains strictly `USDC`. Enforced by §5.1 and criterion 5.
+**RD-1 — Tron ticker: `TRX`.** Client-approved. The Figma design uses `TRX`; `TRC` exists nowhere in the design file and must not appear in code, copy, tests or fixtures. USD Coin is strictly `USDC`. Enforced by §5.1 and criterion 5.
 
-**RD-2 — The minimum is INCLUSIVE, and the CTA label drops the `>`.** Final client decision (a mid-review swing to a strict comparison was reverted).
+**RD-2 — The minimum is INCLUSIVE, and the CTA label carries no `>`.** Client-approved.
 
 - **Rule:** `sendAmount < minAmount[sendAsset]` ⇒ `below-min`. Exactly the minimum is **valid**. Operator is `<`, never `<=`. This matches BRIEF §6B literally.
-- **Why:** amounts are truncated to the asset's decimals, so a strict `>` comparison would move the real usable minimum a whole decimal step above the published one (USDC `0.01` → `0.02`, TRX `0.03` → `0.04`). The client saw that side effect and chose inclusive so the published minimum stays reachable.
-- **CTA copy:** `Min amount is {MIN} {ASSET}` — **without** the `>` sign (e.g. `Min amount is 0.01 USDC`). With an inclusive minimum, `Min amount is >0.01 USDC` would be actively misleading, since `0.01` is accepted. Client-approved deviation from the BRIEF §6B string.
+- **Why:** amounts are truncated to the asset's decimals, so a strict `>` comparison would move the real usable minimum a whole decimal step above the published one (USDC `0.01` → `0.02`, TRX `0.03` → `0.04`). Inclusive keeps the published minimum reachable.
+- **CTA copy:** `Min amount is {MIN} {ASSET}` — **without** the `>` sign (e.g. `Min amount is 0.01 USDC`). With an inclusive minimum, `Min amount is >0.01 USDC` would be actively misleading, since `0.01` is accepted. This is a client-approved deviation from the BRIEF §6B string.
 - **Placeholders use `≥`:** the format is `≥{MIN_AMOUNT}` — `≥0.01`, `≥0.00000013`, `≥0.03` and so on (all six strings in §9.2), with `≥` = U+2265 as a single character. With an inclusive minimum, `≥` is the only technically truthful sign; a `>` placeholder would misstate the rule exactly as `Min amount is >0.01 USDC` would on the button.
-- **`≥` matches the current Figma design** — the client corrected the sign in the design file, so this is neither a deviation from the design nor a fallback value. The only source it departs from is the literal `>{MIN_AMOUNT}` string in **BRIEF §3, which is now stale**; the brief lags behind the design. On this sign, the current design wins over the brief.
-- **The earlier "keep `>` in the placeholders" rule is cancelled.** It predates both this decision and the design fix. The character `>` must not appear in rendered UI copy anywhere.
+- **`≥` matches the current Figma design**, so this is neither a deviation from the design nor a fallback value. The only source it departs from is the literal `>{MIN_AMOUNT}` string in **BRIEF §3**. On this sign, the current design wins over the brief.
+- **The character `>` must not appear in rendered UI copy anywhere** — not in a placeholder, a label, a helper text or a summary row.
 - **Helper text** under the send card is `Minimum amount is {MIN} {SEND_ASSET}` — no sign.
 - Enforced by §6 rule 6 + the boundary table, §6.1, §7, §9.2, §10 E21/E22, and criteria 30, 31, 32, 35, 36 and 38.
 
-**RD-3 — Accent `#2b7bea` stays; two contrast failures are waived.** Confirmed by the client as a deliberate trade-off, not a defect: CTA label `#ffffff` on `#2b7bea` = **4.1:1** and `MAX` chip label `#2b7bea` on `#f7f6fa` = **3.8:1**, both below the WCAG 2.1 AA 1.4.3 threshold of 4.5:1 for non-large text. No colour, font size or font weight may be changed to compensate, and no workaround (text shadow, outline, overlay) may be added. A reviewer must not FAIL the build on these two measurements. All other accessibility requirements, including every other contrast pair, remain mandatory in full. Documented in §14.1 and enforced by criterion 108.
+**RD-3 — Accent `#2b7bea` stays; two contrast failures are waived.** A client-approved trade-off, not a defect: CTA label `#ffffff` on `#2b7bea` = **4.1:1** and `MAX` chip label `#2b7bea` on `#f7f6fa` = **3.8:1**, both below the WCAG 2.1 AA 1.4.3 threshold of 4.5:1 for non-large text. No colour, font size or font weight may be changed to compensate, and no text shadow, outline or overlay may be added. Neither measurement is a build failure. All other accessibility requirements, including every other contrast pair, are mandatory in full. Documented in §14.1 and enforced by criterion 108.
 
-**RD-4 — No dropdown option is ever disabled; collisions auto-move the opposite field.** Client decision that **overrides BRIEF §4**, which required `disabled: true` on the opposite field's asset.
+**RD-4 — No dropdown option is ever disabled; collisions auto-move the opposite field.** Client-approved rule that **overrides BRIEF §4**, which required `disabled: true` on the opposite field's asset.
 
-- **Cancelled:** the disabled-option rule from BRIEF §4. No option is greyed out, blocked or skipped, and `aria-disabled` must not appear on any option. Any leftover disabled-option logic is a defect.
-- **This field's current asset** is shown with a check mark and `aria-selected="true"` and stays clickable. The client's wording: the check mark is enough, there is no need to disable anything. Re-picking it is a pure no-op that only closes the list.
+- **The disabled-option rule of BRIEF §4 does not apply.** No option is greyed out, blocked or skipped, and `aria-disabled` must not appear on any option. Disabled-option logic anywhere in the dropdown is a defect.
+- **This field's current asset** is shown with a check mark and `aria-selected="true"` and stays clickable. The check mark alone communicates the selection; nothing is disabled. Re-picking it is a pure no-op that only closes the list.
 - **The opposite field's asset is fully selectable.** Picking it auto-moves the opposite field to `ASSET_LIST.find(a => a !== picked)` over `['BTC','ETH','USDC','SOL','XRP','TRX']` — so the first candidate is always `BTC`, and `ETH` when `BTC` is the one just picked.
 - **Symmetric:** the same rule fires from either dropdown.
 - **Amounts:** no new rule. The active field keeps its typed value, the passive field is recomputed at the new rate — the existing asset-change path (§8.5 step 4, §10 E9).
-- **Invariant unchanged, mechanism changed:** `sendAsset !== receiveAsset` still always holds and `BTC → BTC` is still unreachable, but it is now guaranteed by the auto-move rather than by forbidding a selection. **This is the key behavioural difference from BRIEF §4** and the most likely place for a stale implementation to survive.
+- **Invariant and mechanism:** `sendAsset !== receiveAsset` always holds and `BTC → BTC` is unreachable, guaranteed by the auto-move rather than by forbidding a selection. **This is the key behavioural difference from BRIEF §4** and the single most important point of this decision.
 - Agreed cases: `USDC → BTC` + pick `BTC` in send ⇒ `BTC → ETH`; `USDC → BTC` + pick `USDC` in receive ⇒ `BTC → USDC`; `ETH → SOL` + pick `SOL` in send ⇒ `SOL → BTC`.
 - Documented in §2, §3, §8.5, §10 E9a/E9b, §14 "Token dropdown"; enforced by criteria 56–64.
 
-**RD-5 — `below-min` is unreachable for USDC, and that is correct.** The client confirmed the validation code is right and the old test expectation was wrong.
+**RD-5 — `below-min` is unreachable for USDC, and that is correct.** Client-approved: the validation rule of §6 is right as specified.
 
 - USDC has `decimals: 2` and `minAmount: 0.01`, so the minimum *is* the smallest representable value. Anything smaller sanitises to `0.00` (§9 rule 6), parses to `0`, and is caught by §6 rule 3 as `typing` — never `below-min`.
-- The retired expectation `0.009 ⇒ below-min` for USDC was **invalid by construction**: `0.009` cannot be entered at all.
+- An expectation of `0.009 ⇒ below-min` for USDC is **invalid by construction**: `0.009` cannot be entered at all.
 - **Not a defect.** Do not add an epsilon, an extra hidden decimal, a `toFixed` round-trip or a USDC special case to make the state appear.
 - **TRX is reachable** even though it also has `decimals: 2`, because its minimum `0.03` is three units of the last decimal: `0.01` and `0.02` both trigger `below-min`. The shared code path therefore remains covered by tests.
 - USDC is the **only** asset with this property; the full reachability matrix is in §6.2.
-- Raising the USDC balance to `92514.30` (RD-17) does **not** affect this: reachability depends on `decimals` and `minAmount`, not on the balance.
+- The USDC balance of `92514.30` (RD-17) does **not** affect this: reachability depends on `decimals` and `minAmount`, not on the balance.
 - Documented in §6 boundary table, §6.2, §10 E23; enforced by criteria 36 and 37.
 
-**RD-6 — Confirm Exchange is a VIEW inside the card, not a modal.** The single largest structural change in this revision, and a deliberate cancellation of the brief.
+**RD-6 — Confirm Exchange is a VIEW inside the card, not a modal.** Client-approved rule that **overrides BRIEF §7**.
 
-- **What BRIEF §7 said:** the step was called "Confirm Exchange **Modal**", and `Back` was specified as a button that "closes modal and restores Screen 2".
-- **What the client decided:** «все переходы и состояния происходят внутри формы», «зачем нам лишние оверлеи и модалки». The modal is **cancelled**. All three steps happen inside the one card, which swaps its own contents.
-- This is **not a forgotten rudiment of the brief** — it is a conscious replacement. If a future reader finds `role="dialog"` in the code and BRIEF §7 saying "Modal", the SPEC is the tie-breaker: there is no modal.
+- **BRIEF §7** calls the step "Confirm Exchange **Modal**" and specifies `Back` as a button that "closes modal and restores Screen 2". This SPEC overrides both.
+- **The rule:** «все переходы и состояния происходят внутри формы», «зачем нам лишние оверлеи и модалки» — all three steps happen inside the one card, which swaps its own contents. There is no modal.
+- Where BRIEF §7 says "Modal", this SPEC is the tie-breaker: there is no modal, and `role="dialog"` in the code is a defect.
 - Consequences, all mandatory:
-  - **Removed:** overlay, backdrop, `role="dialog"`, `aria-modal`, focus trap, `inert`, `aria-hidden` on the background, `body { overflow: hidden }`, portal, `position: fixed`, backdrop-click handling, the required `Esc` handler, and the mobile bottom-sheet variant.
-  - **Added:** `view: 'form' | 'confirm' | 'success'` as the single switch; `isModalOpen` is deleted from state.
-  - Card title changes `Exchange` → **`Confirm Exchange`** in the same Title Row.
+  - **Absent:** overlay, backdrop, `role="dialog"`, `aria-modal`, focus trap, `inert`, `aria-hidden` on the background, `body { overflow: hidden }`, portal, `position: fixed`, backdrop-click handling, a required `Esc` handler, and the mobile bottom-sheet variant.
+  - **Present:** `view: 'form' | 'confirm' | 'success'` as the single switch; there is no `isModalOpen` flag in state.
+  - The card title is **`Confirm Exchange`** in the same Title Row that holds `Exchange` in the form view.
   - Buttons are **stacked**, `Confirm Exchange (0:SS)` above `Back`, gap `12`, at every viewport.
   - `From` and `To` rows gain a `22 × 22` **coin icon** before the amount.
-  - A11y switches from dialog semantics to **view-transition semantics**: deliberate focus move to the new view's heading, announcement via the shared `role="status"`, natural tab order, keyboard-operable `Back`, `Esc` optional.
-- **Unchanged:** the 10 s quote-lock timer and its `0:00` behaviour (pause → fresh rate → recalculate → restart), and `Back` preserving all typed values, assets and `activeSource`.
+  - A11y follows **view-transition semantics**, not dialog semantics: deliberate focus move to the new view's heading, announcement via the shared `role="status"`, natural tab order, keyboard-operable `Back`, `Esc` optional.
+- **Also required:** the 10 s quote-lock timer and its `0:00` behaviour (pause → fresh rate → recalculate → restart), and `Back` preserving all typed values, assets and `activeSource`.
 - Documented in §1, §2, §3, §3.3, §8.6, §10 E13/E15/E26, §12, §13, §14 "View transitions"; enforced by criteria 65–77 and 100–104.
 
-**RD-7 — Amount Field: one focus indicator, on the card.** The `<input>` renders no `outline`, `border` or `box-shadow` of its own; the blue `2px #2b7bea` focus indication lives on the card via `:focus-within`. The previous double ring (card + input) is a defect. When focus and `insufficient-funds` coincide, **red wins** — the card shows only the `2px #FF4D4D` border. Documented in §6.1 and §11.7; enforced by criteria 39 and 106.
+**RD-7 — Amount Field: one focus indicator, on the card.** The `<input>` renders no `outline`, `border` or `box-shadow` of its own; the blue `2px #2b7bea` focus indication lives on the card via `:focus-within`. A double ring (card + input) is a defect. When focus and `insufficient-funds` coincide, **red wins** — the card shows only the `2px #FF4D4D` border. Documented in §6.1 and §11.7; enforced by criteria 39 and 106.
 
-**RD-8 — Success colour is a real token; OQ-8 is closed.** Figma frame `133:1496` defines `icon/success = #22c55e`. The `#12B76A` fallback is retired and must not appear in the code. The indicator is a `96 × 96` **ring** with a check inside, not a filled disc. Documented in §11.2 and §11.11; enforced by criteria 78–79. Its exact geometry is settled in RD-14.
+**RD-8 — Success colour is a real token; OQ-8 is closed.** Figma frame `133:1496` defines `icon/success = #22c55e`. `#12B76A` must not appear in the code. The indicator is a `96 × 96` **ring** with a check inside, not a filled disc. Documented in §11.2 and §11.11; enforced by criteria 78–79. Its exact geometry is settled in RD-14.
 
-**RD-9 — The four screens now exist in Figma; layout is read, not reconstructed. OQ-9 is closed.** The `Flow` frame `136:1942` contains `Default`, `Filled`, `Redesign — Confirm` and `Redesign — Success`. Every size and spacing value in §3.0, §11.4, §11.7, §11.8, §11.8a and §11.11a is now taken from those frames. `[FALLBACK]` tags removed as a result: `h1 28/36`, the exchange-card radius `24`, the card padding, all internal gaps, and the success colour. Still `[FALLBACK]`: the **breakpoints and mobile adaptations** (Figma has desktop frames only — see OQ-13) and the page-background gradient geometry.
+**RD-9 — The four screens exist in Figma; layout is read, not reconstructed. OQ-9 is closed.** The `Flow` frame `136:1942` contains `Default`, `Filled`, `Redesign — Confirm` and `Redesign — Success`. Every size and spacing value in §3.0, §11.4, §11.7, §11.8, §11.8a and §11.11a is taken from those frames. Not `[FALLBACK]`: `h1 28/36`, the exchange-card radius `24`, the card padding, all internal gaps, and the success colour. Still `[FALLBACK]`: the **breakpoints and mobile adaptations** (Figma has desktop frames only — see OQ-13) and the page-background gradient geometry.
 
-**RD-10 — Real coin icons replace the monograms.** Figma `136:2275` holds the six brand marks. Letter-monogram placeholders are a defect. They are supplied as inline SVG React components at `28 / 24 / 22` px depending on context. Documented in §11.10; enforced by criteria 109–111.
+**RD-10 — Real coin icons, never monograms.** Figma `136:2275` holds the six brand marks. Letter-monogram placeholders are a defect. They are supplied as inline SVG React components at `28 / 24 / 22` px depending on context. Documented in §11.10; enforced by criteria 109–111.
 
-**RD-11 — CurrencySelector has no border and no fill.** Confirmed against Figma `133:1409` → `104:783`: the trigger is a bare row with no stroke and no background. The `1px solid #cccade` border previously added is removed. The control remains visible because of the **white `#ffffff` logo box** on the `#f7f6fa` card plus the `#181818` ticker and chevron — that is the design's affordance, so no compromise border is needed. Documented in §11.7; enforced by criteria 53–54.
+**RD-11 — CurrencySelector has no border and no fill.** Confirmed against Figma `133:1409` → `104:783`: the trigger is a bare row with no stroke and no background. It carries no `1px solid #cccade` border. The control remains visible because of the **white `#ffffff` logo box** on the `#f7f6fa` card plus the `#181818` ticker and chevron — that is the design's affordance, so no additional border is needed. Documented in §11.7; enforced by criteria 53–54.
 
 **RD-12 — Mock figures are illustrative and must not be copied.** Client wording: «в макете цифры не точные, это просто показ дизайна, все цифры и логика подсчета утверждены, их менять не нужно», and for the header total specifically «сумма не соответствует, это пример». In particular the mock's `1 BTC ≈ 82,150.00 USDC` for a `USDC → BTC` pair does **not** change the rate direction — the base stays the **send** asset per BRIEF §2. Full do-not-copy list in §11.12; enforced by criteria 11 and 131.
 
-**RD-13 — The header is IN scope, as static chrome. OQ-12 is closed.** The client asked for it after the previous SPEC revision: «это больше статическая часть просто "что б было"». It is **implemented**.
+**RD-13 — The header is IN scope, as static chrome. OQ-12 is closed.** Client wording: «это больше статическая часть просто "что б было"».
 
-- **Reversal:** the header was previously listed under "Explicitly NOT in scope". That line is **removed**. A reader must not mistake the implemented header for scope creep, and a reviewer must not report it as a SPEC divergence.
-- **What it is:** a static, non-interactive block — `CLEAN WALLET` logo on the left; wallet glyph, total balance and settings glyph on the right. Geometry from Figma `133:1419`, documented in §11.13. **Its right-hand side was subsequently redesigned — see RD-18 for the current contents.**
+- **What it is:** a static, non-interactive block — `CLEAN WALLET` logo on the left; wallet glyph, total balance and settings glyph on the right. Geometry from Figma `133:1419`, documented in §11.13. **Its right-hand side is specified in RD-18.**
 - **Zero interactivity.** No buttons, links, click handlers, `tabIndex` or `role="button"`; the glyphs are decorative. Rationale: nothing in the header has any behaviour, so shipping real controls would create focusable affordances that respond to nothing — worse for a keyboard or screen-reader user than having none. The header adds nothing to the tab order.
 - **One live value:** the total balance is **computed** as `Σ (MOCK_BALANCES[asset] × prices[asset])` and formatted as USD via `Intl`. It reads the same balances and the same price map as the rest of the app. While `prices === null` it shows an em dash `—`, never a zero.
 - **Mobile is `[FALLBACK]`** — no mobile header exists in Figma (§13, OQ-13).
 - Documented in §2 (in scope), §11.13, §13, §14 "Header"; enforced by criteria 112–121.
 
-**RD-14 — Success ring geometry comes from the design; OQ-14 is closed.** The indicator is now an **inline SVG exported from Figma `133:1500`**: a filled annulus with outer radius `40` and inner radius `36`, i.e. thickness **`4`**, with the check baked into the same vector and coloured through `currentColor` from `--success`. The earlier CSS `border: 3px solid #22c55e` approach and its eyeballed `3px` are superseded — the value is read from the design, not measured off a render. The only thing in §11 still taken from a render rather than a token is now the header's gradient stops (OQ-15). Documented in §8.7 and §11.11; enforced by criterion 78.
+**RD-14 — Success ring geometry comes from the design; OQ-14 is closed.** The indicator is an **inline SVG exported from Figma `133:1500`**: a filled annulus with outer radius `40` and inner radius `36`, i.e. thickness **`4`**, with the check baked into the same vector and coloured through `currentColor` from `--success`. A CSS `border: 3px solid #22c55e` approach does not satisfy this, and the thickness is not `3px` — the value is read from the design, not measured off a render. The only value in §11 taken from a render rather than a token is the header's gradient stops (OQ-15). Documented in §8.7 and §11.11; enforced by criterion 78.
 
-**RD-15 — Horizontal scroll must be checked across a range, not at a point.** Review found a real bug: at `768px` the then-current header's intrinsic width (`132 + 198 + 24 + 327 + 132 = 813`) overflowed the viewport and the document gained a horizontal scrollbar. The old criterion only asserted `320px` and so never caught it. The requirement is now **no horizontal scroll at any width from `320` to `1440`**, verified by sweeping the range. The header redesign (RD-18) reduced the intrinsic width to `658`, which removes the `768px` failure, but the range requirement stands on its own and the builder's proportional padding stays. Documented in §13; enforced by criterion 122.
+**RD-15 — Horizontal scroll is checked across a range, not at a point.** The requirement is **no horizontal scroll at any width from `320` to `1440`**, verified by sweeping the range. A point check at `320px` can pass while an intermediate width — `768px` in particular — overflows, because the header's intrinsic width, not the card's, is the binding constraint there. With the header of RD-18 the intrinsic width is `658` and `768` fits, but the range requirement stands on its own and the proportional padding is required. Documented in §13; enforced by criterion 122.
 
 **RD-16 — The rate ring is a determinate PROGRESS indicator.** Client wording: «иконка процесса сейчас не анимирована (нужно анимировать, она должна заполняться по мере истечения времени до обновления курса)».
 
-- It **fills `0% → 100%`** over `POLL_INTERVAL_MS` (`10 000 ms`), measured from the start of the previous request, so the user can see how fresh the rate is and when it will change. The previous behaviour — spinning only during the request — is **superseded**.
+- It **fills `0% → 100%`** over `POLL_INTERVAL_MS` (`10 000 ms`), measured from the start of the previous request, so the user can see how fresh the rate is and when it will change. A ring that only spins during the request does **not** satisfy this.
 - At `100%` the request fires and the ring goes **indeterminate** (rotating), because no remaining time is left to represent. On success it resets to `0%` and starts filling again.
 - **Frozen** while polling is paused (`view === 'confirm'`, `document.hidden`, `view === 'success'`). **Track only, no progress and no rotation** in `rate-error`, because nothing is counting towards an update.
 - **The progress value must come from the same source that schedules the polling.** A second, independent timer would drift and the indicator would stop matching reality. The rendering technique is left to the builder; only the timing contract is mandated.
 - **`prefers-reduced-motion: reduce`:** the **determinate fill is kept** — it is information about rate staleness, not decoration, though it may be stepped. The **indeterminate rotation is removed** and the ring holds at `100%`. This is the single documented exception to the "all motion off" rule in §12.
-- Geometry is unchanged from §11: `16 × 16`, thickness `2`, track `#e0e0ec`, progress `#2b7bea`, gap `8`, above the `Continue` button.
+- Geometry, per §11: `16 × 16`, thickness `2`, track `#e0e0ec`, progress `#2b7bea`, gap `8`, above the `Continue` button.
 - Documented in §8.1, §10 E19/E29/E30, §12; enforced by criteria 13–19.
 
-**RD-17 — USDC mock balance raised to `92514.30`.** Client wording: «нужно увеличить баланс для USDC (сейчас вижу 2,500, а нужно 92,514.30, соответственно нужно пересчитать общий баланс в хедере)».
+**RD-17 — USDC mock balance is `92514.30`.** Client wording: «нужно увеличить баланс для USDC (сейчас вижу 2,500, а нужно 92,514.30, соответственно нужно пересчитать общий баланс в хедере)».
 
-- `MOCK_BALANCES.USDC` changes `2500` → **`92514.30`**. The other five balances are unchanged: `BTC 0.0425`, `ETH 1.25`, `SOL 12.5`, `XRP 300`, `TRX 1500`.
+- `MOCK_BALANCES.USDC` is **`92514.30`**. The other five balances are `BTC 0.0425`, `ETH 1.25`, `SOL 12.5`, `XRP 300`, `TRX 1500`.
 - The header total is **derived** from this map, so it recalculates automatically — there is no separate figure to edit, and no exact total is asserted anywhere.
-- **The §5.2 test cases were rewritten**, because they were built on `2500`:
-  - `3000` USDC is **no longer** `insufficient-funds` — it is now `valid`. The old example is retired.
-  - `MAX` on USDC now fills `92514.3`, not `2500`.
-  - The new USDC insufficient-funds example is `100000`.
-  - A **second, durable case was added on BTC** (`BTC → USDC`, type `0.05` against the `0.0425` balance). It does not depend on the USDC balance, so it survives any further adjustment. Prefer it in tests.
+- **The §5.2 test cases follow from these balances:**
+  - `3000` USDC is `valid`, not `insufficient-funds`.
+  - `MAX` on USDC fills `92514.3`.
+  - The USDC insufficient-funds example is `100000`.
+  - A **durable case on BTC** (`BTC → USDC`, type `0.05` against the `0.0425` balance) does not depend on the USDC balance, so it survives any further adjustment. Prefer it in tests.
 - This does **not** affect RD-5: `below-min` reachability depends on `decimals` and `minAmount`, not on the balance.
 - Documented in §5.2 (cases B1–B8), §3.1, §8.4, §9.1; enforced by criteria 91–92 and 50.
 
-**RD-18 — Header right side redesigned: no avatar, no wallet address, no dropdown chevron.** The client changed the design; same node `133:1419`.
+**RD-18 — Header right side: no avatar, no wallet address, no dropdown chevron.** Client-approved design, node `133:1419`.
 
-- **Menu shrank** from `327 × 32` at `x: 981` to **`172 × 32` at `x: 1136`**. `padding-inline: 132` is preserved on both sides (`1136 + 172 = 1308 = 1440 − 132`).
-- **Now exactly three elements**, flush right: wallet glyph `20 × 20` in a `32 × 32` box at inset `6` **with no circular background** · the **total balance** text at gap `8` · the gear glyph `24 × 24` at gap `24`.
-- **Removed** — all `hidden` in the Figma node and therefore absent from the build: the `Balance` block **with its avatar**, the secondary `Avator`, the `Ellipse 341` disc behind the wallet glyph, and `Arrows/drop` (the dropdown chevron).
-- **The text slot now holds the balance, not a wallet address.** Its Figma node is still *named* `0x...E0EEd` because layer names do not track content — that name must not be read as a requirement to render an address.
-- **`HEADER_WALLET_LABEL` is deleted.** There is no wallet-address constant and no `0x…` string in the app any more. The exemption that criterion 131 used to grant it is **removed with it**, so the do-not-copy rule now applies to the header without exception.
-- **The "avatar is a gradient ellipse, not a photo" decision is now moot** — there is no avatar at all. It is preserved as a historical record in RD-19 so it does not look like a requirement was quietly dropped.
-- `$346,788.72` (the figure in the newer screenshot) joins `$346,788.072` on the do-not-copy list. The client said outright «сумма не соответствует, это пример».
-- Arithmetic consequence: the header's intrinsic width is now `132 + 198 + 24 + 172 + 132 = 658`, which **fits** in `768` — the overflow RD-15 recorded is resolved by the redesign. The range requirement and the proportional padding both stay.
+- **Menu block** is **`172 × 32` at `x: 1136`**. `padding-inline: 132` holds on both sides (`1136 + 172 = 1308 = 1440 − 132`).
+- **Exactly three elements**, flush right: wallet glyph `20 × 20` in a `32 × 32` box at inset `6` **with no circular background** · the **total balance** text at gap `8` · the gear glyph `24 × 24` at gap `24`.
+- **Absent from the build** — all `hidden` in the Figma node: the `Balance` block **with its avatar**, the secondary `Avator`, the `Ellipse 341` disc behind the wallet glyph, and `Arrows/drop` (the dropdown chevron).
+- **The text slot holds the balance, not a wallet address.** Its Figma node is *named* `0x...E0EEd` because layer names do not track content — that name must not be read as a requirement to render an address.
+- **There is no `HEADER_WALLET_LABEL` constant**, no wallet-address constant and no `0x…` string in the app. Criterion 131 grants no exemption, so the do-not-copy rule applies to the header without exception.
+- **There is no avatar of any kind.** The rule that applies if one is ever introduced is in RD-19.
+- `$346,788.72` and `$346,788.072` are both on the do-not-copy list — «сумма не соответствует, это пример».
+- Arithmetic: the header's intrinsic width is `132 + 198 + 24 + 172 + 132 = 658`, which **fits** in `768`. The range requirement (RD-15) and the proportional padding both hold.
 - Documented in §2, §11.12, §11.13, §13, §14 "Header"; enforced by criteria 112–121 and 131.
 
-**RD-19 — Historical record: the header avatar was never a photograph.** While an avatar existed in the design (before RD-18 removed it), this SPEC deliberately replaced the raster `Image` fill — a photograph of a person — with a gradient ellipse, on the grounds that a publicly reachable demo application should not ship a real person's face. That requirement is **no longer active**, because the avatar was removed from the design entirely. It is recorded here so the reasoning is not lost and so it is clear the rule was superseded by a design change rather than quietly dropped. If an avatar ever returns, the same rule applies again: gradient or generated placeholder, never a photograph.
+**RD-19 — No photograph is ever used as an avatar.** The header contains no avatar at all (RD-18), so nothing implements this today. It is a standing rule for the whole app: if an avatar is ever introduced, it is a gradient or a generated placeholder — never a raster `Image` fill showing a photograph of a person, because a publicly reachable demo application must not ship a real person's face.
 
 ### 16.2 Open questions (8 remaining — each already has a working default in this SPEC)
 
-**OQ-2 — Default asset pair.** Not stated in the brief. This SPEC picks `USDC → BTC`, which now matches **both** the BRIEF §7 example (`82,150 USDC → 1 BTC`) and the Figma `Default` frame (`USDC` in *You send*, `BTC` in *You receive*). Two independent sources agree, so this is close to settled — confirm and it can move to §16.1.
+**OQ-2 — Default asset pair.** Not stated in the brief. This SPEC picks `USDC → BTC`, which matches **both** the BRIEF §7 example (`82,150 USDC → 1 BTC`) and the Figma `Default` frame (`USDC` in *You send*, `BTC` in *You receive*). Two independent sources agree, so this is close to settled — confirm and it can move to §16.1.
 
 **OQ-4 — Grouping inside the inputs.** Figma's `Amount Field / State=Filled` shows `2,000.00` — grouped, with padded decimals. Grouping a *focused, editable* field requires caret-position bookkeeping. This SPEC groups only the passive (computed) field, the confirm view and the success view, and keeps the actively-typed field ungrouped. Confirm this is acceptable, or budget for a masked input.
 
@@ -1530,4 +1529,4 @@ A reviewer marks PASS only if every line below is true.
 
 **OQ-13 — Mobile design.** Figma has desktop frames only (`1440 × 1024`). The breakpoints (`768`, `360`), the reduced card padding, the amount-font step-downs, the mobile page padding and **the header collapse rules** in §13 are all **[FALLBACK]** engineering choices, not design decisions. The client asked for "адаптив, норм виглядає на телефоні", which these satisfy, but if a mobile frame exists or is wanted, §13 and §11.13's responsive table should be re-derived from it. In particular: confirm that hiding the header balance below `768px` is acceptable, rather than shrinking or wrapping it.
 
-**OQ-15 — Header logo gradient stops.** The logo mark uses the Figma `Gradient` / `Additional Colors/Gradient` tokens. The variable API returns an empty value for gradient fills, so the exact stops are not extractable and are currently implemented from the rendered design. If the gradient needs to be exact, supply the stops (colours, angle) or export the mark as SVG. This is the only value in §11 still taken from a render rather than a token. (The gradient circle behind the wallet glyph is no longer relevant — it was removed by RD-18.)
+**OQ-15 — Header logo gradient stops.** The logo mark uses the Figma `Gradient` / `Additional Colors/Gradient` tokens. The variable API returns an empty value for gradient fills, so the exact stops are not extractable and are currently implemented from the rendered design. If the gradient needs to be exact, supply the stops (colours, angle) or export the mark as SVG. This is the only value in §11 taken from a render rather than a token. (There is no gradient circle behind the wallet glyph — see RD-18.)
