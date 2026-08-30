@@ -1,0 +1,115 @@
+/* Figma `86:612` CurrencySelector. Every value below is read from that node
+   and its variables. Nothing is carried over from the shipped
+   `components/TokenSelect.module.css`, which styles only a resting trigger. */
+
+.selector {
+  /* The four state fills of `86:612`. index.css has no token for them:
+     --bg-page and --disabled-bg happen to carry the same hex, but they mean
+     "the page surface" and "a disabled control", not "this trigger is
+     hovered", so the Figma names are kept instead of borrowing them. */
+  --tc-bg-hover: #f7f6fa; /* Figma tc/bg/hover */
+  --tc-bg-pressed: #e4e7ec; /* Figma tc/bg/pressed */
+  --tc-bg-focus: #f7f6fa; /* Figma tc/bg/focus */
+  --tc-bg-expanded: #f7f6fa; /* Figma tc/bg/default — the fill of `86:653` */
+  --tc-bg-disabled: #f7f6fa; /* Figma tc/bg/disabled */
+
+  display: inline-flex;
+  align-items: center;
+  /* `86:613` hugs its content at 106x32 with no padding: 32 logo + 8 gap
+     + 42 ticker + 24 caret. */
+  padding: 0;
+  background: none; /* `86:613` carries no fill */
+  border: none;
+  border-radius: var(--radius-m); /* Figma input-field/radius 12 */
+  /* Figma tc/text/ticker and tc/icon/chevron are both #181818; the ticker and
+     the caret inherit it, so a state only has to repaint `color`. */
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+/* Figma `86:613` — the resting trigger is transparent. */
+.default {
+  background: none;
+}
+
+/* Figma `86:621`. */
+.hover {
+  background: var(--tc-bg-hover);
+}
+
+/* Figma `86:629`. */
+.pressed {
+  background: var(--tc-bg-pressed);
+}
+
+/* Figma `86:653` — caret up, same fill, still no panel. */
+.expanded {
+  background: var(--tc-bg-expanded);
+}
+
+/* Figma `86:645`. The ring is `focus/ring`: a Focus/GapWidth 2 shadow in
+   bg/primary under a Focus/RingWidth 4 shadow in border/focus, which is why
+   the frame measures 114x40 around the 106x32 pill.
+
+   The global --focus-ring token in index.css is `0 0 0 2px #fff,
+   0 0 0 6px #2b7bea` — a 4px blue band where the mockup has 2px — so it is
+   deliberately not used, and the two-class selector outranks the `:focus-visible`
+   rule index.css applies to every element.
+
+   `.focus` is the story state; `:focus-visible` is the same paint for real
+   keyboard focus, which the component still owes a keyboard user. */
+.selector.focus,
+.selector:focus-visible {
+  background: var(--tc-bg-focus);
+  outline: none;
+  box-shadow:
+    0 0 0 2px var(--bg-primary),
+    0 0 0 4px var(--border-focus);
+}
+
+/* Figma `86:637` — tc/text/name/disabled and tc/icon/chevron/disabled are both
+   #98a2b3, which is exactly --text-disabled. */
+.disabled {
+  background: var(--tc-bg-disabled);
+  color: var(--text-disabled);
+  cursor: not-allowed;
+}
+
+/* Measured off the `86:637` render: the coin art is faded while the white
+   plate under it stays #ffffff (#2775CA composites to #a9c8ea over white). */
+.disabled .glyph {
+  opacity: 0.4;
+}
+
+/* Figma `86:615` Crypto Logo. Its nominal 4px padding cannot apply — the frame
+   is fixed at 32 and the glyph at 28 — so the glyph is simply centred. */
+.logo {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: var(--bg-primary); /* Figma tc/logo-bg #ffffff */
+  border-radius: var(--radius-full); /* Figma tc/logo-radius 999 */
+}
+
+.glyph {
+  display: block;
+  flex: none;
+}
+
+/* Figma typography/body/md/semibold — Poppins 600 15/22, letter-spacing 0.
+   tc/gap/crypto 8 sits between the logo and the ticker only; the caret is
+   flush against the ticker, which is what keeps the pill at 106 and not 114. */
+.ticker {
+  margin-inline-start: var(--space-2);
+  font: var(--font-body-md);
+}
+
+.caret {
+  display: block;
+  flex: none;
+  width: 24px; /* Figma tc/icon-size 24 */
+  height: 24px;
+}

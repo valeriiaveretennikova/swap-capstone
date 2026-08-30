@@ -1,0 +1,273 @@
+/* Figma `86:1040` Amount Field — 380x102 (380x84 once the helper is hidden).
+   Every value below was read with `get_design_context` / `get_variable_defs` on
+   the eight state nodes. Where the Figma value already exists verbatim in
+   `src/index.css` the token is reused; otherwise the literal carries the name of
+   the Figma variable it came from. Nothing here was copied from the frozen
+   `src/components/AmountField.module.css`. */
+
+.field {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--space-1); /* input-field/outer-gap 4 */
+  width: 100%;
+  max-width: 380px;
+  letter-spacing: 0; /* typography/letterspacing/default 0 */
+}
+
+/* Figma `104:777` Input Container.
+   In Figma the stroke sits inside the frame, so the card measures 84 tall in
+   every state and its content stays 16px from the outer edge. A CSS border is
+   part of the border box instead, so the padding pays for it:
+   padding = input-field/padding 16 - the current border width. Going from 1px
+   to 2px on focus therefore moves nothing — no 1px jump between states. */
+.card {
+  --card-border-width: 1px; /* input-field/border-width/default */
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1); /* Spacing/4 */
+  padding: calc(16px - var(--card-border-width)); /* input-field/padding 16 */
+  border: var(--card-border-width) solid var(--border-subtle); /* input-field/border/default #0f143733 */
+  border-radius: var(--radius-m); /* input-field/radius 12 */
+  background: var(--bg-page); /* input-field/bg/default #f7f6fa */
+}
+
+/* Figma `104:778` LabelRow — 348x16, gap 16. */
+.labelRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+/* typography/labels/label — Poppins Regular 12/16, input-field/text/label #6b688c. */
+.label {
+  flex: 1 1 0;
+  min-width: 0;
+  margin: 0;
+  font: var(--font-caption-sm);
+  color: var(--text-secondary);
+}
+
+/* Figma `104:780` Balance Row — 153x16, gap Spacing/8. */
+.balanceRow {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-2);
+}
+
+/* Icon/wallet 16x16, stroke #6b688c. */
+.walletIcon {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  color: var(--text-secondary);
+}
+
+/* typography/body/2sm/regular — Poppins Regular 12/16, input-field/text/balance #6b688c. */
+.balance {
+  margin: 0;
+  font: var(--font-body-2sm);
+  color: var(--text-secondary);
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* The MAX chip is `ChipButton` from this same library — Figma `77:3399`.
+   Its look and its Disabled state live there, so this file styles nothing
+   about it: one source of truth per Figma component. */
+
+/* Figma `104:782` InputContent — 348x32, space-between, no gap. */
+.valueRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Figma `104:783` CurrencySelector — 106x32, no border, no fill, radius 12
+   (input-field/radius). The chevron follows the ticker with no gap, which is
+   why the logo + ticker keep their own `tc/gap/crypto 8` wrapper. */
+.selector {
+  flex: none;
+  display: flex;
+  align-items: center;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-m);
+  background: none;
+  cursor: pointer;
+}
+
+.crypto {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2); /* tc/gap/crypto 8 */
+}
+
+/* Crypto Logo — 32x32, tc/logo-bg #ffffff, tc/logo-radius 999, 4px inset
+   around the 28x28 glyph. */
+.logo {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: var(--space-1);
+  border-radius: var(--radius-full);
+  background: var(--bg-primary);
+}
+
+/* typography/body/md/semibold — Poppins SemiBold 15/22, tc/text/ticker #181818. */
+.ticker {
+  font: var(--font-body-md);
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+
+/* tc/icon-size 24, tc/icon/chevron #181818. */
+.chevron {
+  flex: none;
+  width: 24px;
+  height: 24px;
+  color: var(--text-primary);
+}
+
+/* typography/body/lg/semibold — Poppins SemiBold 20/30, right aligned.
+   input-field/text/value #181818. */
+.amount {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-width: 0;
+  margin: 0;
+  font: var(--font-body-lg);
+  color: var(--text-primary);
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* input-field/text/placeholder #b8b6d2 — the `≥0.01` string of SPEC §9.2. */
+.placeholder {
+  color: var(--text-placeholder);
+}
+
+/* Figma `86:1063` Helper Text — 380x14, padding-inline 16, text centred in the
+   14px slot. typography/labels/caption 12/16, input-field/text/helper #6b688c. */
+.helper {
+  display: flex;
+  align-items: center;
+  height: 14px;
+  margin: 0;
+  padding-inline: var(--space-4); /* input-field/helper-padding-x 16 */
+  font: var(--font-caption-sm);
+  color: var(--text-secondary);
+}
+
+/* Figma `86:1082` Dropdown List — full card width, dd-list/bg/default #ffffff,
+   dd-list/border/default #0f143733 at dd-list/border-width 1, dd-list/radius 12,
+   dd-list/padding 12, dd-list/gap 4, shadow/dropdown 0 6px 8px #21201f0a. */
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-3);
+  overflow: hidden;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-m);
+  background: var(--bg-primary);
+  box-shadow: var(--shadow-dropdown);
+}
+
+/* `DropdownItem` is drawn at its own Figma width (180px); inside this list the
+   rows are `w-full`, and the list is what decides that. The extra `.field`
+   raises the specificity above `.item`, so the override does not depend on the
+   order the two CSS modules end up in the bundle. */
+.field .panel > * {
+  width: 100%;
+}
+
+/* ---- States. Each look is a class on the root, never a pseudo-class, so a
+   snapshot never depends on a real pointer or on the document having focus. --- */
+
+/* Figma `86:1049` Hover — input-field/bg/hover and input-field/border/default
+   are the same values as Default; only the selector picks up tc/bg/hover. */
+.hover .selector {
+  background: var(--bg-page); /* tc/bg/hover #f7f6fa */
+}
+
+/* Figma `86:1065` Focus Visible — the card keeps its ordinary 1px
+   input-field/border/default and the ring is drawn entirely OUTSIDE it:
+   Focus/GapWidth 2 in bg/primary #ffffff, then Focus/RingWidth 4 in
+   border/focus #2b7bea, which renders the node at 388px.
+   Deliberately NOT `--focus-ring` from index.css: that token is 2px + 6px (a
+   4px blue band) and does not match this node. */
+.focusVisible .card {
+  box-shadow:
+    0 0 0 2px var(--bg-primary),
+    0 0 0 4px var(--border-focus);
+}
+
+/* Figma `86:1083` Focus Input and `86:1073` Focus Select Open — no ring at all,
+   the card's own border becomes input-field/border-width/focus 2 in
+   input-field/border/focus #2b7bea. Verified on the 4x export: an 8px blue band
+   at the node edge and no white gap outside it. */
+.focusInput .card,
+.focusSelectOpen .card {
+  --card-border-width: 2px;
+  border-color: var(--border-focus);
+  background: var(--bg-page); /* input-field/bg/focus #f7f6fa */
+}
+
+/* The caret Figma draws in `104:865` as a literal `|` glyph in Poppins Regular
+   20/30, input-field/text/value #181818. Reproduced as a 1px rule so it depends
+   on no font metric, and static so it never blinks in a snapshot. */
+.caret {
+  flex: none;
+  width: 1px;
+  height: 20px;
+  margin-left: 1px;
+  background: var(--text-primary);
+}
+
+/* Figma `86:1091` Disabled — input-field/border/disabled #e4e7ec (the same
+   value as the `--disabled-bg` token), everything else in #98a2b3. */
+.disabled .card {
+  border-color: var(--disabled-bg);
+}
+
+.disabled .label,
+.disabled .balance,
+.disabled .walletIcon,
+.disabled .ticker,
+.disabled .chevron,
+.disabled .amount,
+.disabled .helper {
+  color: var(--text-disabled);
+}
+
+.disabled .selector {
+  background: var(--bg-page); /* tc/bg/disabled #f7f6fa */
+}
+
+.disabled .selector {
+  cursor: not-allowed;
+}
+
+/* The coin glyph of the Disabled variant is exported with `opacity="0.4"`;
+   Figma exposes no variable for it. The white logo box keeps its full opacity. */
+.disabled .logo > * {
+  opacity: 0.4;
+}
+
+/* Figma `86:1099` Error — input-field/border/error #f20f0f at
+   input-field/border-width/default 1 (measured 4px on the 4x export, i.e. 1 CSS
+   px — this node is NOT 2px), helper in input-field/text/error #f20f0f. */
+.error .card {
+  border-color: #f20f0f; /* input-field/border/error */
+}
+
+.error .helper {
+  color: #f20f0f; /* input-field/text/error */
+}

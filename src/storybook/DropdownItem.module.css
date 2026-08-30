@@ -1,0 +1,99 @@
+/* Figma `7:8551` Dropdown Item, 180x40. Every value below comes from
+   `get_design_context` / `get_variable_defs` on the six state nodes. Where the
+   Figma value already exists verbatim in `src/index.css` the token is reused;
+   otherwise the literal carries the Figma variable name in a comment. */
+
+/* Figma `7:8552` State=Default — no fill.
+   dd-item/gap 8, dd-item/padding-x 8, dd-item/padding-y 8, dd-item/radius 8. */
+.item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: 180px;
+  padding: var(--space-2);
+  border-radius: var(--radius-s);
+  background: transparent;
+  cursor: pointer;
+}
+
+/* dd-item/icon-size 24 — the box is fixed so any glyph lands on the Figma grid. */
+.icon {
+  flex: none;
+  display: flex;
+  width: 24px;
+  height: 24px;
+}
+
+/* Figma `Title` frame: gap Spacing/4, baseline aligned, no wrapping,
+   typography/letterspacing/default 0. `flex: 1` is what pushes the check to
+   x=148, i.e. 8px from the right padding edge. */
+.title {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-1);
+  min-width: 0;
+  white-space: nowrap;
+  letter-spacing: 0;
+}
+
+/* typography size/body-md 15, lineheight/body-md 22, weight/medium, Poppins.
+   Colour dd-item/text/ticker/default #181818. */
+.ticker {
+  font: var(--font-body-md-medium);
+  color: var(--text-primary);
+}
+
+/* typography size/body-sm 14, lineheight/body-sm 20, weight/regular, Poppins.
+   Colour dd-item/text/name/default #6b688c. */
+.name {
+  font: var(--font-body-sm);
+  color: var(--text-secondary);
+}
+
+/* Figma `133:777` -> `133:767` 24/check, filled `icon/brand` #2b7bea. */
+.check {
+  flex: none;
+  width: 24px;
+  height: 24px;
+  color: var(--accent);
+}
+
+/* Figma `7:8560` State=Hover — dd-item/bg/hover #f7f6fa. Text unchanged. */
+.itemHover {
+  background: var(--bg-page);
+}
+
+/* Figma `7:8556` State=Pressed — dd-item/bg/pressed #e4e7ec. Text unchanged. */
+.itemPressed {
+  background: var(--disabled-bg);
+}
+
+/* Figma `24:281` State=Focus — dd-item/bg/focus #ffffff plus the `focus/ring`
+   effect: Focus/GapWidth 2 in bg/primary #ffffff, then Focus/RingWidth 4 in
+   border/focus #2b7bea. The global `--focus-ring` token is 2px + 6px (a 4px
+   blue band) and does NOT match this node, so it is deliberately not used. */
+.itemFocus {
+  background: var(--bg-primary);
+  box-shadow:
+    0 0 0 2px var(--bg-primary),
+    0 0 0 4px var(--border-focus);
+}
+
+/* Figma `7:8564` State=Disabled — no fill; dd-item/text/{ticker,name}/disabled
+   #98a2b3 and the check in icon/disabled #98a2b3. */
+.itemDisabled {
+  cursor: not-allowed;
+}
+
+.itemDisabled .ticker,
+.itemDisabled .name,
+.itemDisabled .check {
+  color: var(--text-disabled);
+}
+
+/* The `Bitcoin-coin` instance in `7:8564` is exported with `opacity="0.4"`;
+   Figma exposes no variable for it. */
+.itemDisabled .icon {
+  opacity: 0.4;
+}

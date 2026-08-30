@@ -1,0 +1,137 @@
+/* Button — Figma `7:4069`, size lg.
+   Every value below is read off the variant nodes and their Figma variables.
+   Where the project already has a matching token in `src/index.css` the token
+   is used; otherwise the raw value carries the Figma variable name next to it. */
+
+.button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* `button/gap/lg: 8` */
+  gap: var(--space-2);
+  /* Figma hugs at `min-w 120`, but every instance in the flow is 380 x 48 —
+     the button fills the content column (SPEC §11.8). */
+  width: 100%;
+  min-width: 120px;
+  /* `button/height/lg: 48` */
+  min-height: var(--control-height);
+  /* `Spacing/12: 12` vertical, `button/padding-x/lg: 24` horizontal */
+  padding: var(--space-3) var(--space-6);
+  /* Primary carries a transparent 1px stroke in Figma, so the box geometry is
+     identical across both styles. */
+  border: 1px solid transparent;
+  /* `button/radius/lg: 8` */
+  border-radius: var(--radius-s);
+  /* Poppins Medium 16/24 — `typography/font/weight/medium`,
+     `button/text/font-size/lg`, `button/text/line-height/lg` */
+  font: var(--font-button-lg);
+  cursor: pointer;
+  transition:
+    background-color var(--duration-base) ease,
+    border-color var(--duration-base) ease,
+    color var(--duration-base) ease;
+}
+
+/* The label fills the row and centres inside it, as in the Figma text node. */
+.label {
+  flex: 1 0 0;
+  min-width: 0;
+  text-align: center;
+  word-break: break-word;
+}
+
+.spinner {
+  flex: none;
+  display: block;
+  animation: button-spin 800ms linear infinite;
+}
+
+/* Local keyframes: CSS Modules scope `animation-name`, so a global `@keyframes`
+   would be unreachable from this file and the animation would silently die. */
+@keyframes button-spin {
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+/* Primary — `button/bg|text|border/primary/*`.
+   Loading has no colour rules of its own: Figma keeps the Default fill and only
+   swaps the label for the spinner. Same for Secondary below. */
+.primary {
+  background: var(--accent);
+  color: var(--text-inverted);
+}
+
+.primary.isHover {
+  background: var(--accent-hover);
+}
+
+.primary.isPressed {
+  background: var(--accent-pressed);
+}
+
+.primary.isDisabled {
+  background: var(--disabled-bg);
+  color: var(--text-disabled);
+}
+
+/* Secondary — `var(--button-*-secondary-*)`.
+   Figma leaves Default/Hover/Pressed/Disabled/Loading without a fill and only
+   sets `#ffffff` on Focus, where the ring's gap layer needs something opaque to
+   read against (see the component's dev note). The fill is stated on every
+   state instead: it is the same white the card behind it uses, so nothing
+   changes visually, and the focus ring stops depending on its surroundings. */
+.secondary {
+  background: var(--bg-primary);
+  border-color: var(--border-primary);
+  color: var(--text-secondary);
+}
+
+.secondary.isHover {
+  border-color: var(--secondary-hover-border);
+}
+
+.secondary.isPressed {
+  border-color: var(--secondary-pressed-border);
+  color: var(--secondary-pressed-text);
+}
+
+.secondary.isDisabled {
+  border-color: var(--disabled-bg);
+  color: var(--text-disabled);
+}
+
+/* Focus — `focus/ring`: a `Focus/GapWidth: 2` layer in `bg/primary` over a
+   `Focus/RingWidth: 4` layer in `border/focus`, i.e. a 2px white gap and a 2px
+   blue band. The global `--focus-ring` token is a 2px gap plus a 4px band, so
+   it does not match this component and is deliberately not used here. */
+.isFocus {
+  outline: none;
+  box-shadow:
+    0 0 0 2px var(--bg-primary),
+    0 0 0 4px var(--border-focus);
+}
+
+.isDisabled,
+.isLoading {
+  cursor: not-allowed;
+}
+
+/* SPEC §12 / E19 — the spinner holds still, it does not rotate. */
+@media (prefers-reduced-motion: reduce) {
+  .spinner {
+    animation: none;
+  }
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
