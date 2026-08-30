@@ -1,49 +1,38 @@
 # Swap
 
-Обмін криптоактивів між собою, без комісії. Односторінковий застосунок: одна картка, у якій відбувається весь обмін від початку до кінця.
+Swap one crypto asset for another, with no fee. A single-page app: one card, and the whole exchange happens inside it from start to finish.
 
-Живий застосунок — https://swap.veretennikova.com
-Бібліотека компонентів — https://swap-storybook.veretennikova.com
-
----
-
-## Що це
-
-Форма обміну на шість активів: BTC, ETH, USDC, SOL, XRP, TRX. Користувач віддає один актив і отримує інший за поточним ринковим курсом. Комісія — 0%.
-
-Баланси в цій версії задані в коді: бекенду немає, і це навчальний проєкт. Єдиний справжній мережевий запит — публічний тікер Binance, з якого береться курс.
-
-## Як це працює
-
-**1. Ввести суму.** Дві картки: «You send» і «You receive». В кожній вибирається актив зі списку і вводиться сума. Заповнювати можна будь-яку з двох — друга рахується сама за курсом. Кнопка `MAX` підставляє весь баланс, стрілка між картками міняє напрямок обміну місцями.
-
-Курс живий: він оновлюється кожні 10 секунд. Над кнопкою обміну є кільце, яке заповнюється в міру того, як спливає час до наступного оновлення — видно, наскільки свіжа цифра.
-
-Форма не дасть піти далі, якщо сума менша за мінімум для цього активу або більша за баланс: у першому випадку кнопка підкаже мінімум, у другому — картка підсвітиться і з'явиться повідомлення.
-
-**2. Підтвердити.** Картка показує підсумок: скільки віддаєте, скільки отримуєте, за яким курсом. Курс тут зафіксований на 10 секунд — рівно стільки, скільки лишається на рішення. Не встигли — курс оновиться сам, і сума перерахується.
-
-**3. Готово.** Успішний екран з номером замовлення.
-
-Усі три кроки — в одній картці. Вона змінює свій вміст, а не відкриває вікна поверх: жодних модалок, оверлеїв і діалогів у застосунку немає.
+Live app — https://swap.veretennikova.com
+Component library — https://swap-storybook.veretennikova.com
 
 ---
 
-## Запуск
+## What it is
 
-```bash
-npm ci
-npm run dev
-```
+An exchange form for six assets: BTC, ETH, USDC, SOL, XRP, TRX. You give one asset and receive another at the current market rate. The fee is 0%.
 
-Потрібен Node 22. Застосунок підніметься на `localhost:5173`.
+Balances in this version are defined in code — there is no backend, and this is a study project. The only real network call is the public Binance ticker, which the rate comes from.
+
+## How it works
+
+**1. Enter an amount.** Two cards: "You send" and "You receive". Each one picks an asset from the list and takes an amount. Type into either — the other is calculated for you at the current rate. `MAX` fills in your whole balance, and the arrow between the cards swaps the direction of the exchange.
+
+The rate is live: it refreshes every 10 seconds. Above the exchange button there is a ring that fills as the time to the next refresh runs out, so you can see how fresh the number is.
+
+The form will not let you go further if the amount is below the minimum for that asset or above your balance. In the first case the button tells you the minimum; in the second the card is highlighted and a message appears.
+
+**2. Confirm.** The card shows the summary: what you give, what you get, at what rate. The rate is locked here for 10 seconds — exactly as long as you have to decide. Miss it and the rate refreshes on its own, and the amount is recalculated.
+
+**3. Done.** A success screen with an order ID.
+
+All three steps live in one card. It swaps its own contents rather than opening anything on top: there are no modals, overlays or dialogs anywhere in the app.
 
 ---
 
-## Документи
+## Documents
 
-| Файл | Що в ньому |
+| File | What is in it |
 |---|---|
-| `SPEC.md` | специфікація: екрани, стани, формули, крайні випадки, критерії приймання |
-| `BRIEF.md` | вихідне ТЗ |
-| `HANDOVER.md` | стан робіт і технічні деталі |
+| `SPEC.md` | specification: screens, states, formulas, edge cases, acceptance criteria |
+| `BRIEF.md` | the original assignment |
+| `HANDOVER.md` | state of the work and technical detail |

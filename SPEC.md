@@ -33,7 +33,7 @@ This is a **page/application**, not a reusable published component. Balances are
 - Confirm view with a 10 s quote-lock countdown and auto rate refresh, stacked `Confirm Exchange` / `Back` buttons.
 - Rate line with an always-present **progress ring** that fills as the time to the next rate refresh runs out, positioned directly above the CTA.
 - Success view with generated Order ID, copy-to-clipboard, timestamp, `Done` reset.
-- **The top header bar** — `CLEAN WALLET` logo, total balance, wallet address, settings glyph. **Static, non-interactive chrome** with one live value (the computed total balance). See §11.13 and RD-13.
+- **The top header bar** — `CLEAN WALLET` logo, total balance, settings glyph. Deliberately simplified for this project: **static, non-interactive chrome** with no clickable elements and no wallet address. It carries one live value — the total balance, which is the real sum of the mock wallet balances rather than a fixed string. See §11.13 and RD-13.
 - Full keyboard + screen-reader support, visible focus, responsive down to 320 px.
 - Loading / error / offline handling for the rate feed.
 
@@ -1111,7 +1111,7 @@ Figma has **no mobile header frame**, so everything below is an engineering choi
 `658 < 768`, so the full desktop header **fits** at 768 px and does not force a horizontal scrollbar there.
 
 Nothing about the scroll requirement is relaxed by this:
-- Criterion 116 — no horizontal scroll at **any** width from `320` to `1440` — is in force. `658` still exceeds `320`–`657`, so the padding reduction and the menu collapse are required at the low end.
+- Criterion 122 — no horizontal scroll at **any** width from `320` to `1440` — is in force. `658` still exceeds `320`–`657`, so the padding reduction and the menu collapse are required at the low end.
 - **Proportional padding is required.** It is what keeps the range between `658` and `768` clean and gives margin if the menu ever grows.
 
 Hiding the balance on small screens is acceptable because it is decorative chrome — no unique information is lost, and the exchange itself never depends on it.
