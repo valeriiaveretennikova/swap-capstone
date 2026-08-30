@@ -1,0 +1,39 @@
+name: Chromatic
+
+# The project token lives only in the repository secrets, so Chromatic runs here
+# rather than on a developer machine.
+on:
+  push:
+    branches: [main]
+  # Lets the build be re-run from the Actions tab without a new commit.
+  workflow_dispatch:
+
+jobs:
+  chromatic:
+    name: Publish Storybook to Chromatic
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # Chromatic compares each build against its ancestors; with a shallow
+          # clone every run would look like a first build and every snapshot
+          # would need re-review.
+          fetch-depth: 0
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Publish to Chromatic
+        uses: chromaui/action@latest
+        with:
+          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+          buildScriptName: build-storybook
+          # Visual changes are reported, they do not fail the workflow.
+          exitZeroOnChanges: true

@@ -1,0 +1,20 @@
+<!-- Same Poppins weights index.html loads (SPEC §11.3): without them every
+     story would be measured in a fallback face. -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  rel="stylesheet"
+  href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap"
+/>
+
+<!-- The Storybook canvas is white, not the app's #f7f6fa page. Components such
+     as the amount card are filled with --bg-page themselves, so a grey canvas
+     would swallow their edges; on white they read as isolated pieces and the
+     story decorator can stay fully transparent (no card, no shadow, no seam).
+     `html body` outscores the `body` rule in index.css, so no !important and no
+     dependence on stylesheet order. -->
+<style>
+  html body {
+    background: var(--bg-primary);
+  }
+</style>

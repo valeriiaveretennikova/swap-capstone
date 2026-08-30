@@ -1,0 +1,51 @@
+/* Figma `77:3399` Chip Button — the variant hugs its label: 28x16 at `MAX`,
+   no padding, no fill, radius 999 (Figma `chip-radius`).
+   Type: Poppins SemiBold 12/16, letter-spacing 0 (Figma `typography/*`).
+   There is no tap-target box here on purpose — this is the library component,
+   drawn exactly as the design measures it, so the focus ring stays a
+   horizontal pill around the label instead of a vertical oval. */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  background: none;
+  border: none;
+  border-radius: var(--radius-full); /* chip-radius 999 */
+  font: var(--font-body-2sm-strong); /* 600 12px/16px Poppins */
+  letter-spacing: 0;
+  text-align: center;
+  white-space: nowrap;
+  color: var(--accent); /* chip-text-default #2b7bea */
+  cursor: pointer;
+}
+
+/* State=Hover `79:554` */
+.chipHover {
+  color: var(--accent-hover); /* chip-text-hover #276fd3 */
+}
+
+/* State=Pressed `79:556` */
+.chipPressed {
+  color: var(--accent-pressed); /* chip-text-pressed #215eb3 */
+}
+
+/* State=Focus `79:558` — the variant adds a fill plus Figma `focus/ring`:
+   a 2px `bg/primary` gap over a 4px `border/focus` spread (a 2px blue band).
+   The ring grows the rendered box from 28x16 to 36x24, which is what the node
+   measures. Deliberately NOT --focus-ring from index.css: that token is
+   2px + 6px (a 4px band) and does not match this design. */
+.chipFocus,
+.chip:focus-visible {
+  background: var(--bg-page); /* input-field/bg/default #f7f6fa */
+  box-shadow:
+    0 0 0 2px var(--bg-primary),
+    0 0 0 4px var(--border-focus);
+  outline: none;
+}
+
+/* State=Disabled `79:560` */
+.chipDisabled {
+  color: var(--text-disabled); /* chip-text-disabled #98a2b3 */
+  cursor: not-allowed;
+}

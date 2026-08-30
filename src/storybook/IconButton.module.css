@@ -1,0 +1,57 @@
+/* Figma `7:9618` Icon Button / Style=Primary.
+   Geometry from the variant: fixed 40x40, 4px padding (Figma `Spacing/4`),
+   8px gap (Figma `button/gap/lg`), 1px border (`icon-button/border-width`),
+   radius 999 (`icon-button/radius/lg`), 20x20 icon.
+   No transitions: the state is a prop, so there is nothing to animate and
+   nothing that can be caught mid-flight by a snapshot. */
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  width: 40px;
+  height: 40px;
+  padding: var(--space-1);
+  background: var(--bg-primary); /* Figma icon-button/bg/default #ffffff */
+  border: 1px solid var(--border-primary); /* icon-button/border/default-stroke #cccade */
+  border-radius: var(--radius-full); /* icon-button/radius/lg 999 */
+  color: var(--text-primary); /* icon-button/icon-color/default #181818 */
+  cursor: pointer;
+}
+
+.button > svg {
+  width: 20px;
+  height: 20px;
+  color: inherit;
+}
+
+/* State=Hover `7:9621` */
+.buttonHover {
+  background: var(--bg-page); /* icon-button/bg/hover #f7f6fa */
+  color: var(--accent-hover); /* icon-button/icon-color/hover #276fd3 */
+}
+
+/* State=Pressed `7:9623` */
+.buttonPressed {
+  background: var(--disabled-bg); /* icon-button/bg/pressed #e4e7ec */
+  color: var(--accent-pressed); /* icon-button/icon-color/pressed #215eb3 */
+}
+
+/* State=Focus `7:9625` — Figma `focus/ring`: a 2px `bg/primary` gap over a 4px
+   `border/focus` spread, i.e. a 2px blue band. Deliberately NOT --focus-ring
+   from index.css: that token is 2px + 6px (a 4px band) and does not match. */
+.buttonFocus,
+.button:focus-visible {
+  box-shadow:
+    0 0 0 2px var(--bg-primary),
+    0 0 0 4px var(--border-focus);
+  outline: none;
+}
+
+/* State=Disabled `7:9627` */
+.buttonDisabled {
+  background: var(--bg-primary); /* icon-button/bg/disabled #ffffff */
+  border-color: var(--disabled-bg); /* icon-button/border/disabled #e4e7ec */
+  color: var(--text-disabled); /* icon-button/icon-color/disabled #98a2b3 */
+  cursor: not-allowed;
+}
