@@ -10,12 +10,9 @@ const config: StorybookConfig = {
     '@storybook/addon-docs',
     // SPEC §14 is a whole accessibility section — the axe panel keeps it honest.
     '@storybook/addon-a11y',
-    // Figma defines Hover and Pressed for Button (§11.8), IconButton (§8.3),
-    // DropdownItem (§8.5) and the MAX chip (§8.4). They are pure CSS
-    // pseudo-classes, so without this addon they could not be pinned into a
-    // static, Chromatic-snapshottable story. Stories opt in per story through
-    // `parameters.pseudo`; nothing is forced globally.
-    'storybook-addon-pseudo-states',
+    // No pseudo-state addon: every component here paints its Figma states from
+    // the `state` prop, so a story never has to pin `:hover` / `:focus-visible`
+    // and a snapshot never depends on the capture browser holding focus.
   ],
   framework: '@storybook/react-vite',
   // Autodocs is not configured here: Storybook 10 removed `docs.autodocs`.
